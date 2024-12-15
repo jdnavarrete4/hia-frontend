@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@400;700&display=swap');
+
+
+
+.form-label {
+    @apply font-semibold text-sm mb-1;
+}
+
+.form-input {
+    @apply w-full border border-gray-300 rounded-lg py-2 px-4;
+}
+
+.placeholder-text {
+    font-size: 14px;
+}
+
+.montserrat-alternates {
+    font-family: 'Montserrat Alternates', sans-serif;
+  }
