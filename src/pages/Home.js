@@ -58,7 +58,7 @@ const Home = () => {
             <div className="relative overflow-auto">
                 <div className="flex flex-col gap-6 items-start justify-start w-[579px] ml-16 mt-60">
                     <div className="flex flex-col gap-2 items-start justify-start montserrat-alternates">
-                        <div className="text-black text-left font-normal text-[64px] leading-none">Proteje a ti</div>
+                        <div className="text-black text-left font-normal text-[64px] leading-none">Proteje a ti ERROR</div>
                         <div className="text-black text-left font-normal text-[64px] leading-none">y a tu familia</div>
                         <div className="text-black text-left font-normal text-[64px] leading-none">junto a nosotros</div>
                     </div>
