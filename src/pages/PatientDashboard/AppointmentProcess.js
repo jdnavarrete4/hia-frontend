@@ -113,6 +113,7 @@ const AppointmentProcess = () => {
             const mappedDates = response.data.results.map((date) => ({
                 ...date,
                 medico_id: date.medico_id || null,
+                medico: date.medico || "Sin asignar",
             }));
 
             setAvailableDates(mappedDates);
@@ -256,7 +257,6 @@ const AppointmentProcess = () => {
         const specialty = specialties.find((spec) => spec.id === id);
         return specialty ? specialty.nombre : "Especialidad no encontrada";
     };
-
 
     const getMedicoName = (id) => {
         const dateWithMedico = availableDates.find((date) => date.medico_id === id);
@@ -440,7 +440,8 @@ const AppointmentProcess = () => {
                                                 <td className="border px-4 py-2">
                                                     {date.hora_inicio} - {date.hora_fin}
                                                 </td>
-                                                <td className="border px-4 py-2">{date.medico}</td>
+                                                <td className="border px-4 py-2">{date.medico || "Sin asignar"}</td>
+
                                                 <td className="border px-4 py-2">
                                                     <button
                                                         onClick={() => handleSelectDate(date)} // Envía la fecha seleccionada al modal
@@ -537,7 +538,7 @@ const AppointmentProcess = () => {
                                 <div className="mb-4">
                                     <p className="text-sm text-blue-600">Médico</p>
                                     <p className="text-lg font-semibold">
-                                        {getMedicoName(selectedAppointment.medico)}
+                                        Dr. {getMedicoName(selectedAppointment.medico) || "Médico no asignado"}
                                     </p>
                                 </div>
                                 <div className="mb-4">
