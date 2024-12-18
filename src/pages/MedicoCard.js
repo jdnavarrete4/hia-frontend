@@ -90,7 +90,12 @@ const MedicoCard = () => {
 
                 {/* Columna 3: Imagen */}
                 <div className="relative h-full w-full">
-                    <img className="rounded-tr-3xl rounded-br-3xl w-full h-full object-cover" style={{ background: "linear-gradient(to left, #d9d9d9, #d9d9d9)" }} src={medico.foto} alt="Doctor" />
+                    <img
+                        className="rounded-tr-3xl rounded-br-3xl w-full h-full object-cover"
+                        src={medico.foto || 'https://via.placeholder.com/400x300?text=Sin+Foto'}
+                        alt={`Foto de ${medico.nombre} ${medico.apellido}`}
+                        onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Imagen+No+Disponible'; }}
+                    />
                 </div>
 
                 {/* Columna 4: Flechas */}

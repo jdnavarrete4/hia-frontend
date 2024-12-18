@@ -25,17 +25,17 @@ const AppointmentProcess = () => {
 
 
     console.log("Datos del paciente:", patientData);
-    // Recuperar datos del paciente al cargar el componente
+
     useEffect(() => {
         const fetchPatientData = async () => {
             try {
-                const token = localStorage.getItem('token'); // Recupera el token del almacenamiento local
+                const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8000/api/patient-data/', {
                     headers: {
                         Authorization: `Token ${token}`, // Enviar el token de autenticación
                     },
                 });
-                setPatientData(response.data); // Guarda los datos recibidos en el estado
+                setPatientData(response.data);
                 console.log(response.data);
             } catch (error) {
                 console.error('Error al recuperar los datos del paciente:', error);
@@ -43,9 +43,9 @@ const AppointmentProcess = () => {
         };
 
         fetchPatientData();
-    }, []); // Este Hook se ejecuta una vez cuando el componente se monta
+    }, []);
 
-    // Recuperar las provincias y cantones al cargar el componente
+
     useEffect(() => {
         const fetchProvincesAndCantons = async () => {
             try {
@@ -59,7 +59,7 @@ const AppointmentProcess = () => {
         fetchProvincesAndCantons();
     }, []);
 
-    // Manejar el cambio de provincia seleccionada
+
     const handleProvinceChange = (event) => {
         const selected = event.target.value;
         setSelectedProvince(selected);
@@ -67,17 +67,17 @@ const AppointmentProcess = () => {
         setCantons(province ? province.cantones : []);
     };
 
-    // Mostrar mensaje mientras los datos se cargan
+
     if (!patientData) {
         return <div>Cargando datos...</div>;
     }
 
-    // Lógica para manejar la acción de continuar y cargar especialidades
+    //  continuar y cargar especialidades
     const handleContinue = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/especialidades/');
-            setSpecialties(response.data); // Cargar especialidades
-            setStep(2); // Cambiar a la vista de selección de especialidad
+            setSpecialties(response.data);
+            setStep(2);
         } catch (error) {
             console.error('Error al cargar especialidades:', error);
         }
@@ -85,11 +85,11 @@ const AppointmentProcess = () => {
 
     // Manejar el cambio de especialidad
     const handleSpecialtyChange = (event) => {
-        const selectedSpecialtyId = parseInt(event.target.value, 10); // Convertir el ID a número entero
+        const selectedSpecialtyId = parseInt(event.target.value, 10);
         const selectedSpecialty = specialties.find((specialty) => specialty.id === selectedSpecialtyId);
 
-        setSelectedSpecialty(selectedSpecialtyId); // Configura el ID de la especialidad seleccionada como número
-        setSelectedSpecialtyName(selectedSpecialty?.nombre || ""); // Configura el nombre de la especialidad seleccionada
+        setSelectedSpecialty(selectedSpecialtyId);
+        setSelectedSpecialtyName(selectedSpecialty?.nombre || "");
     };
 
     // Buscar fechas disponibles
@@ -102,23 +102,22 @@ const AppointmentProcess = () => {
         const pageNumber = typeof page === 'number' ? page : currentPage;
 
         try {
-            console.log("Buscando disponibilidad en página:", pageNumber);
 
             const response = await axios.get(
                 `http://localhost:8000/api/fechas-disponibles/${selectedSpecialty}/?page=${pageNumber}`
             );
 
-            console.log("Respuesta de la API:", response.data); // Debug: imprime los datos recibidos
+            console.log("Respuesta de la API:", response.data);
 
-            // Mapea los resultados para incluir `medico_id` junto con los demás datos
+
             const mappedDates = response.data.results.map((date) => ({
                 ...date,
-                medico_id: date.medico_id || null, // Asegúrate de que el ID del médico esté presente
+                medico_id: date.medico_id || null,
             }));
 
-            setAvailableDates(mappedDates); // Actualiza las fechas disponibles con `medico_id`
+            setAvailableDates(mappedDates);
             console.log("Fechas disponibles actualizadas:", mappedDates);
-            setCurrentPage(pageNumber); // Actualiza la página actual
+            setCurrentPage(pageNumber);
             setTotalPages(Math.ceil(response.data.count / 10));
             setStep(3);
         } catch (error) {
@@ -147,8 +146,8 @@ const AppointmentProcess = () => {
             usuario: patientData.id,
             fecha: date.fecha,
             hora: hour,
-            especialidad: selectedSpecialty, // ID de la especialidad seleccionada
-            medico: date.medico_id, // ID del médico seleccionado
+            especialidad: selectedSpecialty,
+            medico: date.medico_id,
             direccion: "Hospital General Isidro Ayora Piso 3",
             costo: 20.00,
         });
@@ -165,39 +164,24 @@ const AppointmentProcess = () => {
 
 
     const handleCloseModal = () => {
-        setIsModalOpen(false); // Cierra el modal
+        setIsModalOpen(false);
     };
-
-
-    const generateHoursInRange = (startTime, endTime) => {
-        const hours = [];
-        let currentTime = new Date(`1970-01-01T${startTime}:00`);
-        const end = new Date(`1970-01-01T${endTime}:00`);
-
-        while (currentTime <= end) {
-            hours.push(currentTime.toTimeString().slice(0, 5)); // Formato HH:MM
-            currentTime.setMinutes(currentTime.getMinutes() + 60); // Incrementar por 1 hora
-        }
-
-        return hours;
-    };
-
 
 
     const handleSelectDate = (date) => {
-        setSelectedDate(date); // Almacena la fecha seleccionada en el estado
-        setIsModalOpen(true); // Abre el modal
+        setSelectedDate(date);
+        setIsModalOpen(true);
     };
 
 
     const handleConfirmAppointment = async () => {
         try {
-            const formattedDate = formatDateToISO(selectedAppointment.fecha); // Asegúrate de convertir el formato de la fecha
+            const formattedDate = formatDateToISO(selectedAppointment.fecha);
 
             console.log("Datos seleccionados para la cita:", {
                 ...selectedAppointment,
-                fecha: formattedDate, // Fecha en formato correcto
-                estado: "Reservada", // Asegura que el estado se incluya
+                fecha: formattedDate,
+                estado: "Reservada",
             });
 
             const response = await axios.post("http://localhost:8000/api/crear-cita/", {
@@ -218,7 +202,7 @@ const AppointmentProcess = () => {
                 text: "No olvides asistir 10 minutos antes con tu identificación",
             });
 
-            setStep(1); // Resetear al paso inicial si todo va bien
+            setStep(1); // Reset
         } catch (error) {
             console.error("Error al crear la cita:", error);
             if (error.response && error.response.data) {
@@ -234,7 +218,7 @@ const AppointmentProcess = () => {
 
 
     const formatDateToISO = (dateString) => {
-        // Convierte una fecha en formato DD-MMM-YYYY a YYYY-MM-DD
+
         const [day, month, year] = dateString.split("-");
         const months = {
             January: "01",
@@ -255,13 +239,25 @@ const AppointmentProcess = () => {
     };
 
 
-    // Función para obtener el nombre de la especialidad usando su ID
+    const generateHoursInRange = (startTime, endTime) => {
+        const hours = [];
+        let currentTime = new Date(`1970-01-01T${startTime}:00`);
+        const end = new Date(`1970-01-01T${endTime}:00`);
+
+        while (currentTime <= end) {
+            hours.push(currentTime.toTimeString().slice(0, 5)); // Formato HH:MM
+            currentTime.setMinutes(currentTime.getMinutes() + 60);
+        }
+
+        return hours;
+    };
+
     const getSpecialtyName = (id) => {
         const specialty = specialties.find((spec) => spec.id === id);
         return specialty ? specialty.nombre : "Especialidad no encontrada";
     };
 
-    // Función para obtener el nombre del médico usando su ID
+
     const getMedicoName = (id) => {
         const dateWithMedico = availableDates.find((date) => date.medico_id === id);
         return dateWithMedico ? dateWithMedico.medico : "Médico no encontrado";

@@ -18,7 +18,6 @@ const Register = () => {
         fecha_nacimiento: '',
         contrasena: '',
         contrasena_confirmacion: '',
-        direccion: '',
     });
 
     const handleChange = (e) => {
@@ -157,7 +156,7 @@ const Register = () => {
                         />
                     </div>
 
-                    <div className="form-group flex flex-col">
+                    {/* <div className="form-group flex flex-col">
                         <label className="text-xs font-medium text-gray-600">*Dirección</label>
                         <input
                             type="text"
@@ -167,7 +166,7 @@ const Register = () => {
                             value={formData.direccion}
                             onChange={handleChange}
                         />
-                    </div>
+                    </div> */}
 
                     <div className="form-group flex flex-col">
                         <label className="text-xs font-medium text-gray-600">*Contraseña</label>
