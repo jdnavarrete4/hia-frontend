@@ -144,7 +144,7 @@ const AppointmentProcess = () => {
         }
 
         setSelectedAppointment({
-            usuario: patientData.id,
+            paciente: patientData.id,
             fecha: date.fecha,
             hora: hour,
             especialidad: selectedSpecialty,
@@ -186,7 +186,7 @@ const AppointmentProcess = () => {
             });
 
             const response = await axios.post("http://localhost:8000/api/crear-cita/", {
-                usuario: patientData.id,
+                paciente: patientData.id,
                 especialidad: selectedAppointment.especialidad,
                 medico: selectedAppointment.medico,
                 fecha: formattedDate,

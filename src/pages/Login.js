@@ -32,10 +32,18 @@ const Login = () => {
             });
 
             if (response.status === 200) {
-                const { token, rol } = response.data;
+                const { token, rol, medico_id, paciente_id } = response.data;
 
-                // Guardar el token en el almacenamiento local
+                // Guardar el token y rol en el almacenamiento local
                 localStorage.setItem('token', token);
+                localStorage.setItem('rol', rol);
+
+                // Guardar IDs específicos según el rol
+                if (rol === 'medico') {
+                    localStorage.setItem('medico_id', medico_id);
+                } else if (rol === 'paciente') {
+                    localStorage.setItem('paciente_id', paciente_id);
+                }
 
                 Swal.fire({
                     icon: 'success',

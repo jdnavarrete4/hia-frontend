@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Importa el hook useNavigate
+
 import Medicos from '../../assets/medicos.png';
 import c1 from '../../assets/c1.png';
 import c2 from '../../assets/c2.png';
@@ -9,6 +12,65 @@ import { faChevronDown, faCalendarAlt, faHistory, faNotesMedical, faSignOutAlt, 
 import MenuDoctor from './MenuDoctor';
 
 const MedicalDashboard = () => {
+    const [appointments, setAppointments] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
+
+    const medicoId = localStorage.getItem("medico_id");
+    const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                setIsLoading(true);
+                const response = await axios.get(`http://127.0.0.1:8000/api/medico/${medicoId}/citas/`, {
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    },
+                });
+                setAppointments(response.data);
+            } catch (error) {
+                console.error("Error al obtener las citas:", error);
+                setError("No se pudieron cargar las citas. Intente nuevamente más tarde.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (medicoId) {
+            fetchAppointments();
+        } else {
+            setError("No se encontró el ID del médico en localStorage.");
+        }
+    }, [medicoId, token]);
+
+    const handleRowClick = (appointment) => {
+        navigate(`/medicodashboard/consulta/${appointment.id}`);
+    };
+
+    const handleCancel = () => {
+        setIsOverlayVisible(false);
+        setSelectedAppointment(null);
+    };
+
+    const handleStartConsultation = () => {
+        console.log("Consulta iniciada para:", selectedAppointment);
+        setIsOverlayVisible(false);
+    };
+
+    if (isLoading) {
+        return <div>Cargando citas...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+
+
     return (
         <div className="bg-[#f9faff] min-h-screen relative ">
             <MenuDoctor />
@@ -80,47 +142,82 @@ const MedicalDashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <table className="min-w-full mt-4 bg-white rounded-lg">
-                            <thead>
-                                <tr>
-                                    <th className="py-2 px-4 text-left text-[#B5B7C0]">Paciente</th>
-                                    <th className="py-2 px-4 text-left text-[#B5B7C0]">Fecha asignada</th>
-                                    <th className="py-2 px-4 text-left text-[#B5B7C0]">Hora</th>
-                                    <th className="py-2 px-4 text-left text-[#B5B7C0]">Contacto</th>
-                                    <th className="py-2 px-4 text-left text-[#B5B7C0]">Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr className="border-b border-gray-200">
-                                    <td className="py-4 px-4">Jane Cooper</td>
-                                    <td className="py-4 px-4">20-Junio-2024</td>
-                                    <td className="py-4 px-4">9:00 AM</td>
-                                    <td className="py-4 px-4">0967391345</td>
-                                    <td className="py-4 px-4 text-green-600">Activa</td>
-                                </tr>
-                                <tr className="border-b border-gray-200">
-                                    <td className="py-4 px-4">Jane Cooper</td>
-                                    <td className="py-4 px-4">22-Junio-2024</td>
-                                    <td className="py-4 px-4">9:00 AM</td>
-                                    <td className="py-4 px-4">0967391345</td>
-                                    <td className="py-4 px-4 text-red-600">Cancelada</td>
-                                </tr>
-                                <tr className="border-b border-gray-200">
-                                    <td className="py-4 px-4">Jane Cooper</td>
-                                    <td className="py-4 px-4">24-Junio-2024</td>
-                                    <td className="py-4 px-4">9:00 AM</td>
-                                    <td className="py-4 px-4">0967391345</td>
-                                    <td className="py-4 px-4 text-green-600">Activa</td>
-                                </tr>
-                                <tr className="border-b border-gray-200">
-                                    <td className="py-4 px-4">Jane Cooper</td>
-                                    <td className="py-4 px-4">25-Junio-2024</td>
-                                    <td className="py-4 px-4">9:00 AM</td>
-                                    <td className="py-4 px-4">0967391345</td>
-                                    <td className="py-4 px-4 text-green-600">Activa</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div className="bg-[#f9faff] min-h-screen">
+                            {/* Tabla de citas */}
+
+
+                            <table className="min-w-full bg-white rounded-lg">
+                                <thead>
+                                    <tr>
+                                        <th className="py-2 px-4 text-left text-[#B5B7C0]">Paciente</th>
+                                        <th className="py-2 px-4 text-left text-[#B5B7C0]">Fecha</th>
+                                        <th className="py-2 px-4 text-left text-[#B5B7C0]">Hora</th>
+                                        <th className="py-2 px-4 text-left text-[#B5B7C0]">Contacto</th>
+                                        <th className="py-2 px-4 text-left text-[#B5B7C0]">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {appointments.length > 0 ? (
+                                        appointments.map((appointment, index) => (
+                                            <tr
+                                                key={index}
+                                                className="border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+                                                onClick={() => handleRowClick(appointment)}
+                                            >
+                                                <td className="py-4 px-4">
+                                                    {appointment.paciente.first_name} {appointment.paciente.last_name}
+                                                </td>
+                                                <td className="py-4 px-4">{appointment.fecha}</td>
+                                                <td className="py-4 px-4">{appointment.hora}</td>
+                                                <td className="py-4 px-4">{appointment.paciente.telefono}</td>
+                                                <td
+                                                    className={`py-4 px-4 ${appointment.estado === "Reservada"
+                                                        ? "text-green-600"
+                                                        : "text-red-600"
+                                                        }`}
+                                                >
+                                                    {appointment.estado}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="py-4 px-4 text-center text-gray-500">
+                                                No hay citas disponibles.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+
+
+                            {/* Overlay para confirmar acción */}
+                            {isOverlayVisible && selectedAppointment && (
+                                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                                    <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                                        <h2 className="text-xl font-bold mb-4">
+                                            ¿Deseas iniciar la consulta para{" "}
+                                            {selectedAppointment.paciente.first_name}{" "}
+                                            {selectedAppointment.paciente.last_name}?
+                                        </h2>
+                                        <div className="flex justify-end space-x-4">
+                                            <button
+                                                onClick={handleCancel}
+                                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button
+                                                onClick={handleStartConsultation}
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                            >
+                                                Comenzar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
 
