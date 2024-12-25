@@ -84,22 +84,69 @@ const MedicalConsultationProcess = () => {
             prevMedicamentos.filter((_, i) => i !== index)
         );
     };
-
-
     const handleFinalize = async () => {
-        try {
-            const fichaData = {
-                diagnostico: {
-                    tipo_enfermedad: selectedEnfermedad,
-                    descripcion: diagnosis,
-                    covid: isCovid,
-                },
-                receta: medicamentos,
-            };
+        if (!appointment || !appointment.medico_id || !appointment.paciente.id) {
+            Swal.fire("Error", "Información incompleta de la cita.", "error");
+            console.error("appointment:", appointment);
+            return;
+        }
 
-            const response = await axios.post(
-                `http://127.0.0.1:8000/api/citas/${citaId}/ficha/`,
-                fichaData,
+        try {
+            // Crear Diagnóstico
+            const diagnosticoPayload = {
+                descripcion: diagnosis,
+                es_covid: isCovid,
+                medico_id: appointment.medico_id,
+                paciente_id: appointment.paciente.id,
+                enfermedad: selectedEnfermedad,
+            };
+            const diagnosticoResponse = await axios.post(
+                `http://127.0.0.1:8000/api/diagnosticos/${citaId}/`,
+                diagnosticoPayload,
+                {
+                    headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+                }
+            );
+            const diagnosticoId = diagnosticoResponse.data.id;
+
+            // Crear Receta
+            const recetaPayload = {
+                diagnostico_id: diagnosticoId,
+                medicamentos: medicamentos.map((medicamento) => ({
+                    nombre_medicamento: medicamento.nombre,
+                    dosis: medicamento.dosis,
+                    duracion: medicamento.duracion,
+                    prescripcion: medicamento.sugerencias,
+                })),
+                notas: "Receta generada automáticamente",
+            };
+            const recetaResponse = await axios.post(
+                "http://127.0.0.1:8000/api/recetas/",
+                recetaPayload,
+                {
+                    headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+                }
+            );
+            console.log("Respuesta de la API de recetas:", recetaResponse.data);
+
+            const recetaId = recetaResponse.data[0].id;
+
+            // **Coloca el console.log aquí antes de crear la ficha médica**
+            console.log("Datos que se enviarán:", {
+                cita_id: parseInt(citaId, 10),
+                diagnostico_id: diagnosticoId,
+                receta_id: recetaId,
+            });
+
+            // Crear Ficha Médica
+            const fichaPayload = {
+                cita_id: parseInt(citaId, 10),
+                diagnostico_id: diagnosticoId,
+                receta_id: recetaId,
+            };
+            await axios.post(
+                "http://127.0.0.1:8000/api/fichas-medicas/",
+                fichaPayload,
                 {
                     headers: { Authorization: `Token ${localStorage.getItem("token")}` },
                 }
@@ -112,6 +159,9 @@ const MedicalConsultationProcess = () => {
             Swal.fire("Error", "Ocurrió un problema al crear la ficha médica", "error");
         }
     };
+
+
+
 
     if (isLoading) return <div className="text-center text-blue-600">Cargando datos de la cita...</div>;
 
@@ -232,8 +282,8 @@ const MedicalConsultationProcess = () => {
                                                     key={enfermedad.id}
                                                     className="p-2 cursor-pointer hover:bg-blue-100"
                                                     onClick={() => {
-                                                        setSelectedEnfermedad(enfermedad.nombre);
-                                                        setSearchTerm(enfermedad.nombre); // Establecer el término seleccionado en el input
+                                                        setSelectedEnfermedad(enfermedad.id); // Establecer el ID en lugar del nombre
+                                                        setSearchTerm(enfermedad.nombre); // Mostrar el nombre en el input
                                                         setDropdownVisible(false); // Ocultar dropdown después de seleccionar
                                                     }}
                                                 >
@@ -243,9 +293,8 @@ const MedicalConsultationProcess = () => {
                                     </ul>
                                 )}
                             </div>
-
-
                         </div>
+
                         <div className="mb-6">
                             <label
                                 htmlFor="diagnosis"

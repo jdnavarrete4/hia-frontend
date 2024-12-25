@@ -112,6 +112,7 @@ const AppointmentProcess = () => {
 
             const mappedDates = response.data.results.map((date) => ({
                 ...date,
+                horarios: date.horarios || [],
                 medico_id: date.medico_id || null,
                 medico: date.medico || "Sin asignar",
             }));
@@ -438,10 +439,17 @@ const AppointmentProcess = () => {
                                                 <td className="border px-4 py-2">{date.fecha}</td>
                                                 <td className="border px-4 py-2">{date.dia_semana}</td>
                                                 <td className="border px-4 py-2">
-                                                    {date.hora_inicio} - {date.hora_fin}
+                                                    {date.horarios && date.horarios.length > 0 ? (
+                                                        <ul>
+                                                            {date.horarios.map((hora, horaIndex) => (
+                                                                <li key={horaIndex}>{hora}</li>
+                                                            ))}
+                                                        </ul>
+                                                    ) : (
+                                                        "No disponible"
+                                                    )}
                                                 </td>
                                                 <td className="border px-4 py-2">{date.medico || "Sin asignar"}</td>
-
                                                 <td className="border px-4 py-2">
                                                     <button
                                                         onClick={() => handleSelectDate(date)} // Envía la fecha seleccionada al modal
@@ -488,7 +496,7 @@ const AppointmentProcess = () => {
                                     Selecciona la hora disponible para agendar tu cita
                                 </p>
                                 <div className="grid grid-cols-3 gap-4">
-                                    {generateHoursInRange(selectedDate.hora_inicio, selectedDate.hora_fin).map((hour) => (
+                                    {selectedDate.horarios.map((hour) => (
                                         <button
                                             key={hour}
                                             onClick={() => handleSelectHour(hour, selectedDate)}
@@ -498,6 +506,7 @@ const AppointmentProcess = () => {
                                         </button>
                                     ))}
                                 </div>
+
                                 <button
                                     className="mt-6 bg-red-500 text-white px-4 py-2 rounded"
                                     onClick={handleCloseModal}
