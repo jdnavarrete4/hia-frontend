@@ -272,7 +272,7 @@ const AppointmentProcess = () => {
 
 
 
-            <div className="lg:pl-[289px] flex flex-col items-center min-h-screen overflow-auto  gap-7 pt-10">
+            <div className="lg:pl-[289px] pb-[100px] flex flex-col items-center min-h-screen overflow-auto  gap-7 pt-10">
 
                 <div className="flex flex-col gap-8 items-start w-[880px]">
                     <div className="flex flex-col gap-4 items-start">
@@ -285,26 +285,26 @@ const AppointmentProcess = () => {
                     </div>
                 </div>
                 <div
-                    className="bg-white rounded-3xl p-6 flex flex-col gap-8 items-start w-full max-w-[880px]"
-                    style={{ boxShadow: '0px 20px 20px 0px rgba(0, 0, 0, 0.04)' }}
+                    className="bg-white rounded-3xl p-8 flex flex-col gap-8 items-start w-full max-w-[880px]"
+                    style={{ boxShadow: '0px 20px 20px 0px rgba(0, 0, 0, 0.01)' }}
                 >
                     <div className="text-black font-semibold text-xl">Datos del paciente</div>
 
                     {/* Primera fila */}
                     <div className="flex flex-row flex-wrap gap-6 items-center w-full">
-                        <div className="flex flex-col gap-2.5 items-start flex-1 min-w-[250px]">
+                        <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-semibold text-xs">Cédula</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.numero_cedula}
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2.5 items-start flex-1 min-w-[250px]">
+                        <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-semibold text-xs">Nombre</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.nombre} {patientData.apellido}
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2.5 items-start flex-1 min-w-[250px]">
+                        <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-semibold text-xs">Teléfono</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.telefono}
@@ -314,14 +314,20 @@ const AppointmentProcess = () => {
 
                     {/* Segunda fila */}
                     <div className="flex flex-row flex-wrap gap-6 items-center w-full">
-                        <div className="flex flex-col gap-2.5 items-start flex-1 min-w-[250px]">
+                        <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-semibold text-xs">Edad</div>
                             <div className="text-black font-normal text-base">{patientData.edad} años</div>
                         </div>
-                        <div className="flex flex-col gap-2.5 items-start flex-1 min-w-[250px]">
+                        <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-semibold text-xs">Correo</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.correo_electronico || 'No proporcionado'}
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
+                            <div className="text-[#0080c8] font-semibold text-xs">Genero</div>
+                            <div className="text-black font-normal text-base">
+                                {patientData.genero || 'No proporcionado'}
                             </div>
                         </div>
                     </div>
@@ -329,134 +335,129 @@ const AppointmentProcess = () => {
 
 
 
-                <div className="bg-white rounded-3xl p-4 sm:p-6 flex flex-col gap-6 sm:gap-8 w-full max-w-[880px] mx-auto">
+                <div className=" flex flex-col gap-6  w-full max-w-[880px] mx-auto">
 
                     {step === 1 && (
                         <>
-                            <div className="text-black font-semibold text-xl">Datos para confirmar tu cita</div>
-                            <div className="flex flex-col gap-6 items-start w-full">
-                                <div className="flex flex-row gap-6 items-center w-full">
-                                    <div className="flex flex-col gap-2 items-start flex-1">
-                                        <label className="text-black font-semibold text-xs">*Provincia</label>
-                                        <select
-                                            className="w-full bg-white border border-gray-300 rounded-lg p-3 placeholder-text"
-                                            value={selectedProvince}
-                                            onChange={handleProvinceChange}
-                                        >
-                                            <option value="">Selecciona una provincia</option>
-                                            {provinces.map((provincia) => (
-                                                <option key={provincia.id} value={provincia.nombre}>
-                                                    {provincia.nombre}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="flex flex-col gap-2 items-start flex-1">
-                                        <label className="text-black font-semibold text-xs">*Cantón</label>
-                                        <select
-                                            className="w-full bg-white border border-gray-300 rounded-lg p-3 placeholder-text"
-                                            disabled={!cantons.length}
-                                        >
-                                            <option value="">Selecciona un cantón</option>
-                                            {cantons.map((canton) => (
-                                                <option key={canton.id} value={canton.nombre}>
-                                                    {canton.nombre}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2.5 items-end w-full">
-                                <button
-                                    onClick={handleContinue}
-                                    className="bg-[#2393e3] rounded-lg px-6 py-3 text-white font-bold text-sm"
-                                >
-                                    Continuar
-                                </button>
-                            </div>
+                            <button
+                                onClick={handleContinue}
+                                className="
+        self-start
+        relative
+        inline-flex
+        items-center 
+        gap-2
+        text-xl 
+        font-semibold 
+        text-black
+        bg-transparent
+        border-none
+        p-0
+        cursor-pointer
+
+        after:content-['']
+        after:absolute
+        after:left-0
+        after:-bottom-2
+        after:w-0
+        after:h-[3px]
+        after:rounded-full
+        after:bg-[#0080c8]
+        after:transition-all
+        after:duration-300
+        hover:after:w-full
+      "
+                            >
+                                <span className="text-lgt">Iniciar agendamiento de cita</span>
+                                <span className="text-2xl font-bold leading-none">+</span>
+                            </button>
                         </>
                     )}
 
 
                     {step === 2 && (
                         <>
-                            <div className="text-black font-semibold text-xl">Disponibilidad</div>
-                            <div className="text-black font-light text-sm">
-                                Selecciona la especialidad que desees, selecciona la fecha y médico disponible.
-                            </div>
-                            <div className="flex flex-col gap-6 items-start w-full">
-                                <div className="flex flex-col gap-2 items-start w-full">
-                                    <label className="text-black font-semibold text-xs">*Especialidad</label>
-                                    <select
-                                        className="w-full bg-white border border-gray-300 rounded-lg p-3 placeholder-text"
-                                        value={selectedSpecialty}
-                                        onChange={handleSpecialtyChange}
+                            <div className='bg-white rounded-3xl p-6 flex flex-col gap-4'>
+                                <div className="text-black font-semibold text-xl">Disponibilidad</div>
+                                <div className="text-black font-light text-sm">
+                                    Selecciona la especialidad que desees, selecciona la fecha y médico disponible.
+                                </div>
+                                <div className="flex flex-col gap-6 items-start w-full">
+                                    <div className="flex flex-col gap-2 items-start w-full">
+                                        <label className="text-black font-semibold text-xs">*Especialidad</label>
+                                        <select
+                                            className="w-full bg-white border border-gray-300 rounded-lg p-3 placeholder-text"
+                                            value={selectedSpecialty}
+                                            onChange={handleSpecialtyChange}
+                                        >
+                                            <option value="">Selecciona la especialidad</option>
+                                            {specialties.map((specialty) => (
+                                                <option key={specialty.id} value={specialty.id}>
+                                                    {specialty.nombre}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="flex flex-row justify-end w-full mt-6 gap-4">
+                                    <button
+                                        onClick={() => setStep(1)}
+                                        className="bg-white border border-gray-300 rounded-lg px-6 py-3 text-black font-bold text-sm"
                                     >
-                                        <option value="">Selecciona la especialidad</option>
-                                        {specialties.map((specialty) => (
-                                            <option key={specialty.id} value={specialty.id}>
-                                                {specialty.nombre}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        Volver
+                                    </button>
+                                    <button
+                                        onClick={handleSearchAvailability}
+                                        className="bg-[#2393e3] rounded-lg px-6 py-3 text-white font-bold text-sm"
+                                    >
+                                        Buscar disponibilidad
+                                    </button>
                                 </div>
                             </div>
-                            <div className="flex flex-row justify-end w-full mt-6 gap-4">
-                                <button
-                                    onClick={() => setStep(1)}
-                                    className="bg-white border border-gray-300 rounded-lg px-6 py-3 text-black font-bold text-sm"
-                                >
-                                    Volver
-                                </button>
-                                <button
-                                    onClick={handleSearchAvailability}
-                                    className="bg-[#2393e3] rounded-lg px-6 py-3 text-white font-bold text-sm"
-                                >
-                                    Buscar disponibilidad
-                                </button>
-                            </div>
+
                         </>
                     )}
 
                     {step === 3 && (
-                        <div className="mt-6 w-full">
+                        <div className="mt-6 w-full bg-white rounded-3xl p-6">
                             <h2 className="text-lg font-bold mb-4">Fechas Disponibles</h2>
                             {availableDates && availableDates.length > 0 ? (
-                                <table className="table-auto w-full border border-gray-200">
+                                <table className="table-auto w-full border-collapse border-spacing-0 mt-8">
                                     <thead>
-                                        <tr className="bg-gray-100">
-                                            <th className="border px-4 py-2">Fecha</th>
-                                            <th className="border px-4 py-2">Día</th>
-                                            <th className="border px-4 py-2">Horario</th>
-                                            <th className="border px-4 py-2">Médico</th>
-                                            <th className="border px-4 py-2">Acción</th>
+                                        <tr className=" border-b border-gray-200">
+                                            <th className="px-4 py-2 text-left">Fecha</th>
+                                            <th className="px-4 py-2 text-left">Médico</th>
+                                            <th className="px-4 py-2 text-left">Acción</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="space-y-6">
                                         {availableDates.map((date, index) => (
-                                            <tr key={index}>
-                                                <td className="border px-4 py-2">{date.fecha}</td>
-                                                <td className="border px-4 py-2">{date.dia_semana}</td>
-                                                <td className="border px-4 py-2">
-                                                    {date.horarios && date.horarios.length > 0 ? (
-                                                        <ul>
-                                                            {date.horarios.map((hora, horaIndex) => (
-                                                                <li key={horaIndex}>{hora}</li>
-                                                            ))}
-                                                        </ul>
-                                                    ) : (
-                                                        "No disponible"
-                                                    )}
-                                                </td>
-                                                <td className="border px-4 py-2">{date.medico || "Sin asignar"}</td>
-                                                <td className="border px-4 py-2">
+                                            <tr key={index} className="border-b border-gray-200">
+                                                <td className="px-4 py-4">{date.fecha}</td>
+                                                <td className="px-4 py-4">{date.medico || "Sin asignar"}</td>
+                                                <td className="px-4 py-4">
                                                     <button
-                                                        onClick={() => handleSelectDate(date)} // Envía la fecha seleccionada al modal
-                                                        className="bg-green-500 text-white px-3 py-1 rounded"
+                                                        onClick={() => handleSelectDate(date)} // Acción al hacer clic
+                                                        className="flex items-center justify-center px-4 py-2 bg-blue-50 text-blue-400 font-semibold rounded-lg shadow-sm hover:bg-blue-100 focus:outline-none focus:ring focus:ring-blue-300"
                                                     >
-                                                        Seleccionar
+                                                        <span className="mr-2">Seleccionar horario</span>
+                                                        {/* Icono de calendario */}
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            strokeWidth="2"
+                                                            stroke="currentColor"
+                                                            className="w-5 h-5"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                            />
+                                                        </svg>
                                                     </button>
+
                                                 </td>
                                             </tr>
                                         ))}
@@ -465,27 +466,41 @@ const AppointmentProcess = () => {
                             ) : (
                                 <p className="text-gray-500">No hay fechas disponibles.</p>
                             )}
-                            <div className="flex justify-between mt-4">
+                            <div className="flex justify-end mt-4 gap-4">
                                 <button
                                     onClick={() => handleSearchAvailability(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                                    className={`
+                                        px-4 
+                                        rounded
+                                        // Estilos para estado normal
+                                      
+                                    
+                                        // Estilos para estado :disabled
+                                    
+                                        disabled:text-gray-300
+                                        disabled:cursor-not-allowed
+                                      `}
                                 >
                                     Anterior
                                 </button>
                                 <span>
-                                    Página {currentPage} de {totalPages}
+                                    <span className='font-bold text-[#2393e3]'>
+                                        {currentPage}{' '}
+                                    </span>
+                                    de {totalPages}
                                 </span>
                                 <button
                                     onClick={() => handleSearchAvailability(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                                    className=" px-4  rounded"
                                 >
                                     Siguiente
                                 </button>
                             </div>
                         </div>
                     )}
+
 
 
                     {isModalOpen && selectedDate && (
@@ -500,12 +515,13 @@ const AppointmentProcess = () => {
                                         <button
                                             key={hour}
                                             onClick={() => handleSelectHour(hour, selectedDate)}
-                                            className="bg-green-500 text-white px-3 py-1 rounded"
+                                            className="bg-white text-black px-3 py-2 rounded shadow-[0px_20px_20px_0px_rgba(0,0,0,0.05)] hover:bg-gray-100 focus:outline-none"
                                         >
                                             {hour}
                                         </button>
                                     ))}
                                 </div>
+
 
                                 <button
                                     className="mt-6 bg-red-500 text-white px-4 py-2 rounded"
@@ -519,51 +535,64 @@ const AppointmentProcess = () => {
 
 
                     {step === 4 && selectedAppointment && (
-                        <div className="mt-6 w-full">
+                        <div className="mt-6 w-full bg-white rounded-3xl p-6">
                             <h2 className="text-lg font-bold mb-4">Confirma los datos para tu cita</h2>
                             <p className="text-gray-600 mb-4">
                                 Confirma la información de tu cita para proceder con el pago.
                             </p>
-                            <div className="bg-white p-6 rounded-lg  ">
-                                <div className="flex justify-between items-center mb-4 ">
+                            <div className=" p-2 rounded-lg ">
+                                {/* Primera fila: Costo */}
+                                <div className="flex justify-between items-center mb-4">
                                     <div>
-                                        <p className="text-sm text-gray-500">Costo</p>
-                                        <p className="text-2xl font-bold">${selectedAppointment.costo.toFixed(2)}</p>
+                                        <p className="text-sm text-blue-600 ">Costo</p>
+                                        <p className="text-2xl font-bold mt-0">${selectedAppointment.costo.toFixed(2)}</p>
+                                    </div>
+                                </div>
+
+                                {/* Segunda fila: Médico y Fecha */}
+                                <div className="flex justify-between items-center mb-4">
+                                    <div>
+                                        <p className="text-sm text-blue-600">Médico</p>
+                                        <p className="text-lg  mt-0">
+                                            {getMedicoName(selectedAppointment.medico) || "Médico no asignado"}
+                                        </p>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-gray-500">Fecha y hora</p>
-                                        <p className="text-lg font-bold">
+                                        <p className="text-sm text-blue-600">Fecha y hora</p>
+                                        <p className="text-lg  mt-0">
                                             {selectedAppointment.fecha} / {selectedAppointment.hora}
                                         </p>
                                     </div>
                                 </div>
-                                <hr className="my-4" />
+
+                                {/* Línea divisora */}
+                                <hr className="my-4 border-dashed border-gray-300" />
+
+                                {/* Cuarta fila: Especialidad */}
                                 <div className="mb-4">
                                     <p className="text-sm text-blue-600">Especialidad</p>
-                                    <p className="text-lg font-semibold">
+                                    <p className="text-lg  mt-0">
                                         {getSpecialtyName(selectedAppointment.especialidad)}
                                     </p>
                                 </div>
-                                <div className="mb-4">
-                                    <p className="text-sm text-blue-600">Médico</p>
-                                    <p className="text-lg font-semibold">
-                                        Dr. {getMedicoName(selectedAppointment.medico) || "Médico no asignado"}
-                                    </p>
-                                </div>
+
+                                {/* Quinta fila: Dirección */}
                                 <div className="mb-4">
                                     <p className="text-sm text-blue-600">Dirección</p>
-                                    <p className="text-lg font-semibold">{selectedAppointment.direccion}</p>
+                                    <p className="text-lg  mt-0">{selectedAppointment.direccion}</p>
                                 </div>
-                                <div className="flex justify-between mt-4">
+
+                                {/* Botones */}
+                                <div className="flex justify-end mt-16 space-x-2">
                                     <button
                                         onClick={() => setStep(3)} // Regresar al paso anterior
-                                        className="bg-gray-300 text-black px-4 py-2 rounded"
+                                        className="text-black px-4 py-2 rounded border border-gray-400 hover:bg-gray-200"
                                     >
                                         Cancelar
                                     </button>
                                     <button
                                         onClick={handleConfirmAppointment}
-                                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                     >
                                         Confirmar
                                     </button>
@@ -571,6 +600,7 @@ const AppointmentProcess = () => {
                             </div>
                         </div>
                     )}
+
 
 
 
