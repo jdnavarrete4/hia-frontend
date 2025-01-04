@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MenuPatient from './MenuPatient';
 import Swal from 'sweetalert2';
+import MyCalendar from './MyCalendar';
 
 const AppointmentProcess = () => {
 
@@ -128,6 +129,7 @@ const AppointmentProcess = () => {
     };
 
 
+
     const handleSelectHour = (hour, date) => {
         if (!patientData || !patientData.id) {
             console.error("El ID del paciente no está disponible:", patientData);
@@ -171,6 +173,7 @@ const AppointmentProcess = () => {
 
 
     const handleSelectDate = (date) => {
+        // Verifica que 'date.horarios' exista (pero en teoría ya existe)
         setSelectedDate(date);
         setIsModalOpen(true);
     };
@@ -419,85 +422,14 @@ const AppointmentProcess = () => {
                     )}
 
                     {step === 3 && (
-                        <div className="mt-6 w-full bg-white rounded-3xl p-6">
-                            <h2 className="text-lg font-bold mb-4">Fechas Disponibles</h2>
-                            {availableDates && availableDates.length > 0 ? (
-                                <table className="table-auto w-full border-collapse border-spacing-0 mt-8">
-                                    <thead>
-                                        <tr className=" border-b border-gray-200">
-                                            <th className="px-4 py-2 text-left">Fecha</th>
-                                            <th className="px-4 py-2 text-left">Médico</th>
-                                            <th className="px-4 py-2 text-left">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="space-y-6">
-                                        {availableDates.map((date, index) => (
-                                            <tr key={index} className="border-b border-gray-200">
-                                                <td className="px-4 py-4">{date.fecha}</td>
-                                                <td className="px-4 py-4">{date.medico || "Sin asignar"}</td>
-                                                <td className="px-4 py-4">
-                                                    <button
-                                                        onClick={() => handleSelectDate(date)} // Acción al hacer clic
-                                                        className="flex items-center justify-center px-4 py-2 bg-blue-50 text-blue-400 font-semibold rounded-lg shadow-sm hover:bg-blue-100 focus:outline-none focus:ring focus:ring-blue-300"
-                                                    >
-                                                        <span className="mr-2">Seleccionar horario</span>
-                                                        {/* Icono de calendario */}
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="2"
-                                                            stroke="currentColor"
-                                                            className="w-5 h-5"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                            />
-                                                        </svg>
-                                                    </button>
 
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <p className="text-gray-500">No hay fechas disponibles.</p>
-                            )}
-                            <div className="flex justify-end mt-4 gap-4">
-                                <button
-                                    onClick={() => handleSearchAvailability(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                    className={`
-                                        px-4 
-                                        rounded
-                                        // Estilos para estado normal
-                                      
-                                    
-                                        // Estilos para estado :disabled
-                                    
-                                        disabled:text-gray-300
-                                        disabled:cursor-not-allowed
-                                      `}
-                                >
-                                    Anterior
-                                </button>
-                                <span>
-                                    <span className='font-bold text-[#2393e3]'>
-                                        {currentPage}{' '}
-                                    </span>
-                                    de {totalPages}
-                                </span>
-                                <button
-                                    onClick={() => handleSearchAvailability(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
-                                    className=" px-4  rounded"
-                                >
-                                    Siguiente
-                                </button>
-                            </div>
+
+                        <div className="mt-6 w-full bg-white rounded-3xl p-6">
+                            <MyCalendar
+                                availableDates={availableDates}
+                                handleSelectDate={handleSelectDate}
+                            />
+
                         </div>
                     )}
 
