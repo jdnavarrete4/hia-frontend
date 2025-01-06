@@ -40,3 +40,8 @@
     text-decoration: none !important;
     font-size:small;/* Asegúrate de que la primera letra sea mayúscula */
   }
+  .react-calendar__navigation button {
+    max-width: fit-content;
+  }
+
+ 

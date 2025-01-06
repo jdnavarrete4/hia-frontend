@@ -462,11 +462,11 @@ const AppointmentProcess = () => {
 
                     {step === 3 && (
                         <div className="mt-6 w-full bg-white rounded-3xl p-6">
-                            {console.log("Renderizando MyCalendar con fechas:", availableDates)}
                             <MyCalendar
                                 availableDates={availableDates}
                                 handleSelectDate={handleSelectDate}
                                 handleSearchAvailability={handleSearchAvailability}
+                                handleBack={() => setStep(2)}
                             />
                         </div>
                     )}
