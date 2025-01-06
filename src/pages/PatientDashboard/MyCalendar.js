@@ -1,108 +1,123 @@
-import { useState } from 'react';
-import { Calendar } from 'rsuite';
-import 'rsuite/dist/rsuite.min.css';
+import React, { useState, useEffect } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import { parse, format } from 'date-fns';
 
-function MyCalendar({ availableDates, handleSelectDate }) {
-
-
+function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability }) {
+    console.log("Props recibidos en MyCalendar:", { availableDates, handleSearchAvailability });
     const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
-    console.log(
-        'availableDates',
-        availableDates.map((obj) => obj.fecha)
-    );
-    // 1. Convierte tu lista de fechas disponibles en un Set para acceso rápido.
-    //    Suponiendo que `availableDates` es un array de objetos tipo { fecha: 'YYYY-MM-DD', medico: '...' }
+
+    // Convierte la lista de fechas disponibles en un Set para acceso rápido
     const availableSet = new Set(
         availableDates.map((obj) => {
-            // parse(str, 'dd-MMMM-yyyy', new Date()) => Date
-            // format(..., 'yyyy-MM-dd') => "2025-01-08"
             const fecha = parse(obj.fecha, 'dd-MMMM-yyyy', new Date());
             return format(fecha, 'yyyy-MM-dd');
         })
     );
 
-
-    // 2. Esta función le dice al Calendar qué fechas están deshabilitadas.
-    //    Si devuelves "true", la fecha se deshabilita.
-    const disabledDate = (date) => {
-        const dayStr = format(date, 'yyyy-MM-dd');
-        return !availableSet.has(dayStr);
+    // Manejo del cambio de mes
+    const handleMonthChange = ({ activeStartDate }) => {
+        const startDate = format(activeStartDate, 'yyyy-MM-dd');
+        const endDate = format(
+            new Date(activeStartDate.getFullYear(), activeStartDate.getMonth() + 1, 0),
+            'yyyy-MM-dd'
+        );
+        console.log("Solicitando fechas para el mes:", { startDate, endDate });
+        handleSearchAvailability(startDate, endDate);
     };
 
-    // 3. Manejo de la selección de una fecha.
+    // Manejo de la selección de una fecha
     const handleChange = (selectedDate) => {
         setFechaSeleccionada(selectedDate);
 
-        // 1. Conviertes la fecha seleccionada a "YYYY-MM-DD"
         const dayStr = format(selectedDate, 'yyyy-MM-dd');
-
-        // 2. BUSCAS en 'availableDates' el objeto completo con esa fecha
-        //    y lo guardas en 'matchedDate'
         const matchedDate = availableDates.find((obj) => {
-            // Convertimos "08-January-2025" a "2025-01-08" para comparar
             const objDayStr = format(parse(obj.fecha, 'dd-MMMM-yyyy', new Date()), 'yyyy-MM-dd');
             return objDayStr === dayStr;
         });
 
-        // 3. Si lo encuentras, llamas a handleSelectDate con ese objeto que ya contiene "horarios"
-        if (matchedDate) {
-            handleSelectDate(matchedDate);
-        } else {
-            // Si no está, puedes pasar un objeto básico sin horarios
-            handleSelectDate({
+        handleSelectDate(
+            matchedDate || {
                 fecha: dayStr,
                 horarios: [],
                 medico: 'Sin asignar',
-                medico_id: null
-            });
-        }
+                medico_id: null,
+            }
+        );
     };
 
-
-    // 4. Personalizar la forma en que se muestra cada día. 
-    //    Aquí resaltamos los días disponibles con un color de fondo.
-    const renderCell = (date) => {
-        const dayStr = format(date, 'yyyy-MM-dd');
-        const dayNumber = date.getDate();
-
-        if (availableSet.has(dayStr)) {
-            return (
-                <div
-                    style={{
-                        background: '#E0F7FA',
-                        borderRadius: '50%',
-                        width: '2em',
-                        height: '2em',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    {dayNumber}
-                </div>
-            );
-        }
-        return <div>{dayNumber}</div>;
-    };
     return (
-        <div className="bg-white rounded-3xl p-6">
-            <h2 className="text-lg font-bold mb-4">Fechas Disponibles</h2>
+        <div className=" p-6 rounded-lg w-full bg-transparent">
+            <h2 className="text-xl font-bold mb-4">Fechas Disponibles</h2>
             {availableDates && availableDates.length > 0 ? (
                 <Calendar
-                    // Valor actual del calendario
-                    value={fechaSeleccionada}
-                    // Evento al cambiar la fecha seleccionada
+                    locale="es-ES" // Configura el idioma
+                    formatShortWeekday={(locale, date) => {
+                        const shortDay = date.toLocaleDateString(locale, { weekday: 'short' });
+                        return shortDay.charAt(0).toUpperCase() + shortDay.slice(1).toLowerCase();
+                    }}
+                    formatMonthYear={(locale, date) => {
+                        const monthYear = date.toLocaleDateString(locale, { year: 'numeric', month: 'long' });
+                        return monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
+                    }}
+
+
+                    onActiveStartDateChange={handleMonthChange}
                     onChange={handleChange}
-                    // Lógica para deshabilitar días no disponibles
-                    disabledDate={disabledDate}
-                    // Personaliza la celda de cada día
-                    renderCell={renderCell}
+                    tileDisabled={({ date }) => {
+                        const dayStr = format(date, 'yyyy-MM-dd');
+                        return !availableDates.some((d) => {
+                            const parsedDate = parse(d.fecha, 'dd-MMMM-yyyy', new Date());
+                            return format(parsedDate, 'yyyy-MM-dd') === dayStr;
+                        });
+                    }}
+
+
+
+
+                    tileContent={({ date }) => {
+                        const dayStr = format(date, 'yyyy-MM-dd');
+                        const isAvailable = availableDates.some((d) => {
+                            const parsedDate = parse(d.fecha, 'dd-MMMM-yyyy', new Date());
+                            return format(parsedDate, 'yyyy-MM-dd') === dayStr;
+                        });
+
+                        return (
+                            <div
+                                className={`
+                                flex flex-col items-center justify-center w-full h-full rounded-sm 
+                                ${isAvailable ? 'border-t-4 border-blue-500 bg-white' : 'bg-gray-50'}
+                              `}
+                                style={{
+                                    padding: '8px',
+                                    boxShadow: isAvailable
+                                        ? '0 4px 6px rgba(0, 0, 0, 0.1)'
+                                        : 'none',
+                                }}
+                            >
+                                <div className="flex items-center justify-between w-full mb-2">
+                                    <span
+                                        className={`text-sm font-normal ${isAvailable ? 'text-gray-700' : 'text-gray-400'
+                                            }`}
+                                    >
+                                        {date.getDate()}
+                                    </span>
+                                    {isAvailable && (
+                                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                    )}
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                    {isAvailable ? '' : ''}
+                                </div>
+                            </div>
+                        );
+                    }}
+                    className="react-calendar w-full"
                 />
             ) : (
                 <p className="text-gray-500">No hay fechas disponibles.</p>
             )}
-        </div>
+        </div >
     );
 }
 

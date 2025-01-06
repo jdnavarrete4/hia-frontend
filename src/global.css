@@ -18,3 +18,25 @@
 .montserrat-alternates {
     font-family: 'Montserrat Alternates', sans-serif;
   }
+
+  .react-calendar__tile > abbr {
+    display: none !important; /* Oculta el contenido predeterminado del calendario */
+  }
+
+  .react-calendar {
+    width: 100% !important; /* Ocupar todo el ancho */
+    max-width: none !important; /* Sin límite de ancho */
+    border: none; /* Sin bordes */
+    padding: 0; /* Sin relleno */
+    background-color: transparent !important;
+  }
+
+  .react-calendar button{
+    background-color: #fff !important;
+  }
+  
+  .react-calendar__month-view__weekdays {
+    text-transform: capitalize !important; 
+    text-decoration: none !important;
+    font-size:small;/* Asegúrate de que la primera letra sea mayúscula */
+  }
