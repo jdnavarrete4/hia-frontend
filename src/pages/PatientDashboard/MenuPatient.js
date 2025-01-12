@@ -4,8 +4,12 @@ import yo from '../../assets/yo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faSignOutAlt, faChartBar, faUsers, faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import axios from 'axios';
+import { Link, useLocation } from "react-router-dom";
+
 
 const MenuAdmin = () => {
+    const location = useLocation();
+
     const [menuOpen, setMenuOpen] = useState(false);
     const [userData, setUserData] = useState({ nombre: '', rol: '' });
 
@@ -36,21 +40,42 @@ const MenuAdmin = () => {
             {/* Menú lateral para pantallas grandes */}
             <div className="bg-white p-4 flex flex-col justify-between min-h-screen fixed left-0 top-0 w-[289px] hidden lg:flex">
                 {/* Parte superior: Logo y Menú */}
-                <div className="flex flex-col gap-4 items-start w-full">
-                    <img className="hospital-logo w-44 " src={LogoHospital} alt="Logo" />
+                <div className="flex flex-col gap-4 items-start w-full  h-screen p-4">
+                    <img className="hospital-logo w-44" src={LogoHospital} alt="Logo" />
+
                     <div className="flex flex-col gap-2.5 items-start w-full mt-8">
-                        <div className="bg-[#9dd4fc] bg-opacity-50 rounded-lg p-2.5 flex items-center gap-2.5 w-full">
-                            <FontAwesomeIcon icon={faChartBar} className="w-5 h-5 " />
-                            <div className=" font-semibold text-base">Agendamiento de citas</div>
-                        </div>
-                        <div className="rounded-lg p-2.5 flex items-center gap-2.5 w-full">
-                            <FontAwesomeIcon icon={faUsers} className="w-5 h-5 text-gray-500" />
-                            <div className="text-gray-500 font-light text-base">Historial de citas</div>
-                        </div>
-                        <div className="rounded-lg p-2.5 flex items-center gap-2.5 w-full">
-                            <FontAwesomeIcon icon={faCalendarCheck} className="w-5 h-5 text-gray-500" />
-                            <div className="text-gray-500 font-light text-base">Gestión de citas</div>
-                        </div>
+                        <Link
+                            to="/pacientedashboard"
+                            className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/pacientedashboard"
+                                ? "bg-blue-100 text-blue-700"
+                                : "text-gray-500"
+                                }`}
+                        >
+                            <FontAwesomeIcon icon={faChartBar} className="w-5 h-5" />
+                            <div className="font-semibold text-base">Agendamiento de citas</div>
+                        </Link>
+
+                        <Link
+                            to="/historial-citas"
+                            className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/historial-citas"
+                                ? "bg-blue-100 text-blue-700"
+                                : "text-gray-500"
+                                }`}
+                        >
+                            <FontAwesomeIcon icon={faUsers} className="w-5 h-5" />
+                            <div className="font-semibold text-base">Historial de citas</div>
+                        </Link>
+
+                        <Link
+                            to="/gestion-citas"
+                            className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/gestion-citas"
+                                ? "bg-blue-100 text-blue-700"
+                                : "text-gray-500"
+                                }`}
+                        >
+                            <FontAwesomeIcon icon={faCalendarCheck} className="w-5 h-5" />
+                            <div className="font-semibold text-base">Gestión de citas</div>
+                        </Link>
                     </div>
                 </div>
 

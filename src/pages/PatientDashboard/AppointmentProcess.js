@@ -94,15 +94,7 @@ const AppointmentProcess = () => {
         setSelectedSpecialtyName(selectedSpecialty?.nombre || "");
     };
 
-    const getStartAndEndOfMonth = () => {
-        const today = new Date(); // Fecha actual
-        const startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Primer día del mes
-        const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Último día del mes
-        return {
-            startDate: startDate.toISOString().split('T')[0], // Formato YYYY-MM-DD
-            endDate: endDate.toISOString().split('T')[0],
-        };
-    };
+
     // Buscar fechas disponibles
     const handleSearchAvailability = async (startDate, endDate) => {
         if (!selectedSpecialty) {
@@ -327,19 +319,19 @@ const AppointmentProcess = () => {
                     {/* Primera fila */}
                     <div className="flex flex-row flex-wrap gap-6 items-center w-full">
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
-                            <div className="text-[#0080c8] font-semibold text-xs">Cédula</div>
+                            <div className="text-[#0080c8] font-medium text-xs">Cédula</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.numero_cedula}
                             </div>
                         </div>
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
-                            <div className="text-[#0080c8] font-semibold text-xs">Nombre</div>
+                            <div className="text-[#0080c8] font-medium text-xs">Nombre</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.nombre} {patientData.apellido}
                             </div>
                         </div>
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
-                            <div className="text-[#0080c8] font-semibold text-xs">Teléfono</div>
+                            <div className="text-[#0080c8] font-medium text-xs">Teléfono</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.telefono}
                             </div>
@@ -349,17 +341,17 @@ const AppointmentProcess = () => {
                     {/* Segunda fila */}
                     <div className="flex flex-row flex-wrap gap-6 items-center w-full">
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
-                            <div className="text-[#0080c8] font-semibold text-xs">Edad</div>
+                            <div className="text-[#0080c8] font-medium text-xs">Edad</div>
                             <div className="text-black font-normal text-base">{patientData.edad} años</div>
                         </div>
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
-                            <div className="text-[#0080c8] font-semibold text-xs">Correo</div>
+                            <div className="text-[#0080c8] font-medium text-xs">Correo</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.correo_electronico || 'No proporcionado'}
                             </div>
                         </div>
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
-                            <div className="text-[#0080c8] font-semibold text-xs">Genero</div>
+                            <div className="text-[#0080c8] font-medium text-xs">Genero</div>
                             <div className="text-black font-normal text-base">
                                 {patientData.genero || 'No proporcionado'}
                             </div>

@@ -166,10 +166,11 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                         return (
                             <div
                                 className={`flex items-center justify-between w-full h-full rounded-sm 
-                                ${isAvailable ? 'border-t-4 border-blue-500 bg-white' : 'bg-gray-50'}`}
+        ${isAvailable ? 'border-t-4 border-blue-500 bg-white hover:bg-blue-100' : 'bg-gray-50'}`}
                                 style={{
                                     padding: '8px',
                                     boxShadow: isAvailable ? '0 4px 6px rgba(0, 0, 0, 0.1)' : 'none',
+                                    transition: 'background-color 0.3s ease, transform 0.3s ease',
                                 }}
                             >
                                 {/* Número del día */}
@@ -182,6 +183,7 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                                     <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                                 )}
                             </div>
+
 
                         );
                     }}
