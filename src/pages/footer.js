@@ -75,9 +75,9 @@ const Footer = () => {
                         </div>
                     </div>
                     <div className="flex space-x-4">
-                        <FontAwesomeIcon icon={faFacebook} size="2x" className="text-[#2393e3]" />
-                        <FontAwesomeIcon icon={faTwitter} size="2x" className="text-[#2393e3]" />
-                        <FontAwesomeIcon icon={faInstagram} size="2x" className="text-[#2393e3]" />
+                        <FontAwesomeIcon icon={faFacebook} size="2x" className="text-[#424242]" />
+                        <FontAwesomeIcon icon={faTwitter} size="2x" className="text-[#424242]" />
+                        <FontAwesomeIcon icon={faInstagram} size="2x" className="text-[#424242]" />
                     </div>
                 </div>
 

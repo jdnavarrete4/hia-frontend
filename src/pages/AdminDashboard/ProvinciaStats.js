@@ -42,7 +42,7 @@ const ProvinciaStats = () => {
                 <h2 className="text-[#0080c8] font-extralight text-lg">Pacientes por provincia y género</h2>
                 <span className="text-gray-500 font-semibold">Total: {total.toLocaleString()}</span>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={360}>
                 <BarChart data={data} layout="vertical" margin={{ left: 50 }}>
                     <XAxis type="number" />
                     <YAxis type="category" dataKey="provincia" />

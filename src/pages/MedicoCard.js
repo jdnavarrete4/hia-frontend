@@ -1,39 +1,44 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import GroupIcon from '../assets/Group 303.png';
 
 const MedicoCard = () => {
     const [medicos, setMedicos] = useState([]);
+    const [randomMedicos, setRandomMedicos] = useState([]);
     const [error, setError] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    // Obtener los datos de los médicos
     useEffect(() => {
-        axios.get('http://localhost:8000/api/medicos/')
+        axios.get("http://localhost:8000/api/medicos/")
             .then(response => {
-                console.log(response.data); // Verifica el formato completo de la respuesta
                 if (Array.isArray(response.data.results)) {
-                    setMedicos(response.data.results); // Usa `results` que contiene el arreglo
+                    setMedicos(response.data.results);
+                    setRandomMedicos(getRandomItems(response.data.results, 7));
                 } else {
-                    setMedicos([]); // Si no es un arreglo, asigna un arreglo vacío
+                    setMedicos([]);
                     console.error("La API no devolvió un arreglo en 'results'");
                 }
             })
-            .catch(error => {
-                setError("No se encontraron médicos");
-                console.error(error);
-            });
+            .catch(() => setError("No se encontraron médicos"));
     }, []);
 
-
-
-    const handleNext = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % medicos.length);
+    // Función para obtener 7 elementos aleatorios
+    const getRandomItems = (array, count) => {
+        const shuffled = [...array].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
     };
 
-    const handlePrev = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + medicos.length) % medicos.length);
-    };
+    // Rotar automáticamente los médicos cada 4 segundos
+    useEffect(() => {
+        if (randomMedicos.length > 0) {
+            const interval = setInterval(() => {
+                setCurrentIndex((prevIndex) => (prevIndex + 1) % randomMedicos.length);
+            }, 4000);
+
+            return () => clearInterval(interval); // Limpiar el intervalo al desmontar el componente
+        }
+    }, [randomMedicos]);
 
     if (error) {
         return <div>{error}</div>;
@@ -43,77 +48,66 @@ const MedicoCard = () => {
         return <div>Loading...</div>;
     }
 
-    const medico = medicos[currentIndex];
+    const medico = randomMedicos[currentIndex];
 
     return (
-        <div className="relative mx-[62px] mt-[100px]"> {/* Cambié mt-[100px] a mt-[200px] */}
-            <div className="text-center my-10">
-                <span>
-                    <span className="conoce-a-nuestros-especialistas-span">
-                        CONOCE A
-                        <br />
-                    </span>
-                    <span className="conoce-a-nuestros-especialistas-span2">
-                        Nuestros especialistas
-                    </span>
-                </span>
+        <div className="relative mx-auto w-full py-8">
+            {/* Título */}
+            <div className="text-center my-6">
+                <h2 className="text-lg font-bold text-[#2393E3]">CONOCE A</h2>
+                <h2 className="text-2xl font-normal text-black">Nuestros especialistas</h2>
             </div>
 
-            <div className="flex flex-row gap-0 items-center justify-center w-full  mx-auto" style={{ boxShadow: "0px 20px 20px 0px rgba(0, 0, 0, 0.05)" }}>
-                {/* Columna 1: Indicadores */}
-                <div className="flex flex-col gap-4 items-start justify-start ">
-                    {medicos.map((_, index) => (
-                        <div key={index} className={`rounded-3xl shrink-0 w-1.5 h-[31px] relative ${currentIndex === index ? 'bg-blue-600' : 'bg-[rgba(35,147,227,0.30)]'}`}></div>
+            {/* Contenedor principal */}
+            <div className="flex flex-col md:flex-row gap-6 items-center justify-center mx-auto w-full px-6 md:px-56">
+                {/* Barra lateral con indicadores */}
+                <div className="hidden md:flex flex-col gap-2">
+                    {randomMedicos.map((_, index) => (
+                        <div
+                            key={index}
+                            className={`w-2 h-10 rounded-full transition-colors duration-300 ${currentIndex === index ? "bg-blue-600" : "bg-gray-300"
+                                }`}
+                        ></div>
                     ))}
                 </div>
 
-                {/* Columna 2: Descripción */}
-                <div className="bg-white rounded-tl-3xl rounded-bl-3xl pt-[50px] pr-[73px] pb-[50px] pl-[73px] flex flex-col gap-24 items-center justify-center shrink-0 relative max-w-2xl h-full">
-                    <div className="flex flex-col gap-8 items-center justify-center shrink-0 relative">
-                        <div className="text-black text-center font-mulish text-2xl font-normal relative flex items-center justify-center">
-                            Dr. {medico.nombre} {medico.apellido}
-                        </div>
-                        <div className="text-black text-center font-mulish text-2xl font-normal relative flex items-center justify-center">
-                            {medico.especialidad}
-                        </div>
-                        <div className="text-gray-400 text-center font-mulish text-base font-normal relative flex items-center justify-center max-w-md">
-                            <span>{medico.descripcion}</span>
-                        </div>
+                {/* Contenedor unificado de información y foto */}
+                <div
+                    className="bg-white rounded-3xl p-6 flex flex-col md:flex-row gap-6 items-center w-full md:h-[550px]"
+                    style={{ boxShadow: "0px 20px 20px 0px rgba(0, 0, 0, 0.04)" }}
+                >
+                    {/* Foto del médico */}
+                    <div className="w-full md:w-1/2 h-[300px] md:h-full">
+                        <img
+                            className="rounded-lg w-full h-full object-cover"
+                            src={medico.foto || "https://via.placeholder.com/400x300?text=Sin+Foto"}
+                            alt={`Foto de ${medico.nombre} ${medico.apellido}`}
+                            onError={(e) => {
+                                e.target.src = "https://via.placeholder.com/400x300?text=Imagen+No+Disponible";
+                            }}
+                        />
                     </div>
-                    <div className="flex flex-col gap-4 items-center justify-center shrink-0 relative">
-                        <img className="shrink-0 w-[55.5px] h-[27px] relative overflow-visible" src="https://i.ibb.co/q01pfFr/Group-303.png" alt={medico.nombre} />
-                        <div className="text-blue-600 text-center font-mulish text-xs font-normal relative flex items-center justify-center">
-                            MIRAR TODO EL EQUIPO
-                        </div>
-                    </div>
-                </div>
 
-                {/* Columna 3: Imagen */}
-                <div className="relative h-full w-full">
-                    <img
-                        className="rounded-tr-3xl rounded-br-3xl w-full h-full object-cover"
-                        src={medico.foto || 'https://via.placeholder.com/400x300?text=Sin+Foto'}
-                        alt={`Foto de ${medico.nombre} ${medico.apellido}`}
-                        onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Imagen+No+Disponible'; }}
-                    />
-                </div>
+                    {/* Información del médico */}
+                    <div className="flex flex-col items-center text-center max-w-lg mx-auto">
+                        <h3 className="text-2xl font-semibold">Dr.{medico.nombre} {medico.apellido}</h3>
+                        <p className="text-xl text-gray-500 mt-2">{medico.especialidad_nombre}</p>
+                        <p className="text-base text-gray-400 mt-4">{medico.descripcion}</p>
 
-                {/* Columna 4: Flechas */}
-                <div className="flex flex-col items-center justify-center">
-                    <div className="w-10 h-10 flex items-center justify-center cursor-pointer " onClick={handlePrev} style={{ cursor: "pointer" }}>
-                        <div className="rounded-full border-solid border-black border-[0.8px] w-10 h-10 flex items-center justify-center bg-white -mt-12">
-                            <FontAwesomeIcon icon={faArrowUp} className="text-black w-6 h-6" />
-                        </div>
-                    </div>
-                    <div className="w-10 h-10 flex items-center justify-center cursor-pointer" onClick={handleNext} style={{ cursor: "pointer" }}>
-                        <div className="rounded-full border-solid border-black border-[0.8px] w-10 h-10 flex items-center justify-center bg-white">
-                            <FontAwesomeIcon icon={faArrowDown} className="text-black w-6 h-6" />
+                        {/* Icono e información adicional */}
+                        <div className="flex flex-col items-center mt-10">
+                            <img
+                                src={GroupIcon}
+                                alt="Icono equipo"
+                                className="w-14 mb-2"
+                            />
+                            <p className="text-[#2393E3] text-sm font-medium">MIRAR TODO EL EQUIPO</p>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
+
     );
 };
 

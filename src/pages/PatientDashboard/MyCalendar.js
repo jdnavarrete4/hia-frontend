@@ -61,7 +61,7 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                             />
                         </svg>
                     </button>
-                    <h2 className="text-lg font-bold">Fechas Disponibles</h2>
+                    <h2 className="text-lg font-bold">Selecciona una fechas disponible</h2>
                 </div>
 
                 {/* Mes y flechas de navegación */}

@@ -34,22 +34,22 @@ const MenuAdmin = () => {
     return (
         <div>
             {/* Menú lateral para pantallas grandes */}
-            <div className="bg-white p-4 flex flex-col justify-between min-h-screen fixed left-0 top-0 w-[289px] hidden lg:flex">
+            <div className="bg-white p-4 flex flex-col justify-between min-h-screen fixed left-0 top-0 w-[260px] hidden lg:flex">
                 {/* Parte superior: Logo y Menú */}
                 <div className="flex flex-col gap-4 items-start w-full">
                     <img className="hospital-logo w-44 " src={LogoHospital} alt="Logo" />
                     <div className="flex flex-col gap-2.5 items-start w-full mt-8">
-                        <div className="bg-[#9dd4fc] bg-opacity-50 rounded-lg p-2.5 flex items-center gap-2.5 w-full">
-                            <FontAwesomeIcon icon={faChartBar} className="w-5 h-5 " />
-                            <div className=" font-semibold text-base">Estadisticas</div>
+                        <div className=" p-2.5 flex items-center gap-2.5 w-full">
+                            <FontAwesomeIcon icon={faChartBar} className="w-4 h-4 text-[#0080c8] " />
+                            <div className=" font-semibold text-base text-[#0080c8]">Estadisticas</div>
                         </div>
                         <div className="rounded-lg p-2.5 flex items-center gap-2.5 w-full">
-                            <FontAwesomeIcon icon={faUsers} className="w-5 h-5 text-gray-500" />
-                            <div className="text-gray-500 font-light text-base">Gestion de usuarios</div>
+                            <FontAwesomeIcon icon={faUsers} className="w-4 h-4 t" />
+                            <div className="font-light text-base">Gestion de usuarios</div>
                         </div>
                         <div className="rounded-lg p-2.5 flex items-center gap-2.5 w-full">
-                            <FontAwesomeIcon icon={faCalendarCheck} className="w-5 h-5 text-gray-500" />
-                            <div className="text-gray-500 font-light text-base">Gestión de citas</div>
+                            <FontAwesomeIcon icon={faCalendarCheck} className="w-4 h-4 " />
+                            <div className=" font-light text-base">Gestión de citas</div>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@ const MenuAdmin = () => {
                 {/* Parte inferior: Cerrar sesión y datos del usuario */}
                 <div className="flex flex-col gap-4 items-start w-full">
                     <div className="rounded-lg p-2.5 flex items-center gap-2.5 w-full">
-                        <FontAwesomeIcon icon={faSignOutAlt} className="w-5 h-5 text-gray-500" />
+                        <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4 text-gray-500" />
                         <div className="text-gray-500 font-light text-base">Cerrar Sesión</div>
                     </div>
                     <div className="w-full border-t border-gray-300"></div>

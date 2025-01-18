@@ -40,7 +40,7 @@ const EspecialidadStats = () => {
         <div className="bg-white rounded-3xl p-8  w-full">
             <h2 className="text-[#0080c8] font-extralight text-lg ">Asistencia por especialidad</h2>
             <div className="flex justify-center items-center flex-col">
-                <ResponsiveContainer width="100%" height={270}>
+                <ResponsiveContainer width="100%" height={250}>
                     <PieChart>
                         <Pie
                             data={data}

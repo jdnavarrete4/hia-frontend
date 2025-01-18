@@ -37,9 +37,9 @@ const EnfermedadStats = () => {
     const COLORS = ['#7d1cfb', '#9e9e9e', '#bdbdbd', '#e0e0e0'];
 
     return (
-        <div className="bg-white rounded-3xl p-8 w-full">
+        <div className="bg-white rounded-3xl p-8 w-full  ">
             <h2 className="text-[#0080c8] font-extralight text-lg mb-4">Enfermedades más comunes</h2>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={350}>
                 <BarChart layout="vertical" data={data} margin={{ left: 50 }}>
                     <XAxis type="number" />
                     <YAxis type="category" dataKey="enfermedad" />

@@ -425,7 +425,7 @@ const AppointmentProcess = () => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="flex flex-row justify-end w-full mt-6 gap-4">
+                                <div className="flex flex-row justify-end w-full  gap-4">
                                     <button
                                         onClick={() => setStep(1)}
                                         className="bg-white border border-gray-300 rounded-lg px-6 py-3 text-black font-bold text-sm"
