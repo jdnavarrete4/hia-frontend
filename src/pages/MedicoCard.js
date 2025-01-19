@@ -51,15 +51,15 @@ const MedicoCard = () => {
     const medico = randomMedicos[currentIndex];
 
     return (
-        <div className="relative mx-auto w-full py-8">
+        <div className="relative mx-auto w-full ">
             {/* Título */}
-            <div className="text-center my-6">
+            <div className="text-center md:my-6">
                 <h2 className="text-lg font-bold text-[#2393E3]">CONOCE A</h2>
                 <h2 className="text-2xl font-normal text-black">Nuestros especialistas</h2>
             </div>
 
             {/* Contenedor principal */}
-            <div className="flex flex-col md:flex-row gap-6 items-center justify-center mx-auto w-full px-6 md:px-56">
+            <div className="flex flex-col md:flex-row gap-6 items-center justify-center mx-auto w-full px-6 ">
                 {/* Barra lateral con indicadores */}
                 <div className="hidden md:flex flex-col gap-2">
                     {randomMedicos.map((_, index) => (
@@ -73,9 +73,13 @@ const MedicoCard = () => {
 
                 {/* Contenedor unificado de información y foto */}
                 <div
-                    className="bg-white rounded-3xl p-6 flex flex-col md:flex-row gap-6 items-center w-full md:h-[550px]"
-                    style={{ boxShadow: "0px 20px 20px 0px rgba(0, 0, 0, 0.04)" }}
+                    className="bg-white rounded-3xl 
+                    p-6 flex flex-col md:flex-row gap-6 
+                    items-center shadow-none w-full 
+                    max-w-[800px] mx-auto md:h-[550px] my-div"
+
                 >
+
                     {/* Foto del médico */}
                     <div className="w-full md:w-1/2 h-[300px] md:h-full">
                         <img
@@ -106,7 +110,7 @@ const MedicoCard = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
 
     );
 };

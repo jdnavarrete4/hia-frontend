@@ -34,26 +34,32 @@ const Home = () => {
     return (
         <div className="relative bg-white min-h-screen overflow-x-hidden">
             {/* Menú superior */}
-            <div className="absolute top-0 left-0 w-full flex items-center justify-between px-4 py-4 md:px-6 md:py-4 z-10">
+            <div className="absolute top-0 left-0  flex items-end justify-between px-4 py-4 md:px-6 md:py-4 z-10 w-full">
                 {/* Logo y enlaces */}
-                <div className="flex items-center gap-4 md:gap-8">
+                <div className="flex items-end gap-4 md:gap-8 ">
                     <img className="w-[150px] md:w-[220px] h-auto" src={LogoHospital} alt="logo" />
-                    <div className="hidden md:flex gap-6">
+                    <div className="hidden md:flex gap-6 ml-56">
                         <span className="text-black font-normal text-sm md:text-base cursor-pointer">Sobre nosotros</span>
                         <span className="text-black font-normal text-sm md:text-base cursor-pointer">Contactos</span>
                     </div>
                 </div>
                 {/* Búsqueda e inicio de sesión */}
                 <div className="flex items-center gap-4 md:gap-6">
-                    <FontAwesomeIcon icon={faSearch} className="text-black text-base md:text-lg cursor-pointer" />
+                    {/* Icono de buscar (blanco) */}
+                    <FontAwesomeIcon icon={faSearch} className="text-white text-base md:text-lg cursor-pointer" />
+
+                    {/* Icono de usuario (negro) */}
                     <Link
                         to="/login"
                         className="bg-white rounded-3xl px-4 py-2 md:px-6 md:py-2 flex items-center gap-2 border border-gray-300 hover:shadow-lg"
                     >
-                        <FontAwesomeIcon icon={faUser} />
-                        <span className="hidden md:block text-black font-semibold text-sm md:text-base">Iniciar Sesión</span>
+                        <FontAwesomeIcon icon={faUser} className="text-black" />
+                        <span className="hidden md:block text-black font-semibold text-sm md:text-base">
+                            Iniciar Sesión
+                        </span>
                     </Link>
                 </div>
+
             </div>
 
             {/* Contenido principal */}
@@ -90,13 +96,15 @@ const Home = () => {
 
             {/* Carrusel */}
 
-            <div className="md:relative md:-mt-20 z-20">
+            <div className="relative md:-mt-[70px] z-20 w-full overflow-hidden">
                 <Carrusel items={items} />
             </div>
 
 
+
+
             {/* Médicos */}
-            <div className="flex justify-center items-center w-full max-w-screen-xl mx-auto px-4 py-10">
+            <div className="flex justify-center items-center w-full  md:max-w-screen-xl mx-auto  overflow-hidden">
                 <MedicoCard />
             </div>
 
