@@ -291,16 +291,17 @@ const AppointmentProcess = () => {
     };
 
     return (
-        <div className="bg-[#f9faff] min-h-screen">
+        <div className="bg-[#f9faff] min-h-screen pb-12">
 
             <MenuPatient />
 
 
 
 
-            <div className="lg:pl-[289px] pb-[100px] flex flex-col items-center min-h-screen overflow-auto  gap-7 pt-10">
+            <div className="lg:pl-[289px] pb-[100px] md:max-w-full flex flex-col 
+            items-center min-h-screen overflow-auto  gap-7 md:pt-10 pt-[120px] p-6 md:p-0">
 
-                <div className="flex flex-col gap-8 items-start w-[880px]">
+                <div className="flex flex-col gap-8 items-start md:w-[880px] ">
                     <div className="flex flex-col gap-4 items-start">
                         <div className="text-black font-semibold text-2xl">
                             Bienvenido {patientData.nombre}
@@ -317,7 +318,7 @@ const AppointmentProcess = () => {
                     <div className="text-black font-semibold text-xl">Datos del paciente</div>
 
                     {/* Primera fila */}
-                    <div className="flex flex-row flex-wrap gap-6 items-center w-full">
+                    <div className="flex md:flex-row flex-col flex-wrap gap-6 md:items-center items-start w-full">
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-medium text-xs">Cédula</div>
                             <div className="text-black font-normal text-base">
@@ -339,7 +340,7 @@ const AppointmentProcess = () => {
                     </div>
 
                     {/* Segunda fila */}
-                    <div className="flex flex-row flex-wrap gap-6 items-center w-full">
+                    <div className="flex md:flex-row flex-col flex-wrap gap-6 md:items-center items-start w-full">
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-medium text-xs">Edad</div>
                             <div className="text-black font-normal text-base">{patientData.edad} años</div>
@@ -425,12 +426,13 @@ const AppointmentProcess = () => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="flex flex-row justify-end w-full  gap-4">
+                                <div className="flex md:flex-row flex-col justify-end w-full  gap-4 mt-10">
                                     <button
                                         onClick={() => setStep(1)}
-                                        className="bg-white border border-gray-300 rounded-lg px-6 py-3 text-black font-bold text-sm"
+                                        className="bg-white border border-gray-300 
+                                        rounded-lg px-6 py-3 text-black font-normal text-sm order-2 md:order-1"
                                     >
-                                        Volver
+                                        Regresar
                                     </button>
                                     <button
                                         onClick={() => {
@@ -442,7 +444,8 @@ const AppointmentProcess = () => {
                                             console.log("Fechas enviadas desde el botón:", { startDate, endDate });
                                             handleSearchAvailability(startDate, endDate);
                                         }}
-                                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                                        className={`bg-[#0080c8] text-white px-4 md:py-2 py-3 rounded order-1 ${!selectedSpecialty ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        disabled={!selectedSpecialty}
                                     >
                                         Buscar disponibilidad
                                     </button>
@@ -453,7 +456,7 @@ const AppointmentProcess = () => {
                     )}
 
                     {step === 3 && (
-                        <div className="mt-6 w-full bg-white rounded-3xl p-6">
+                        <div className=" w-full  bg-transparent  md:bg-white rounded-3xl md:p-3 p-0">
                             <MyCalendar
                                 availableDates={availableDates}
                                 handleSelectDate={handleSelectDate}
@@ -468,7 +471,7 @@ const AppointmentProcess = () => {
 
                     {isModalOpen && selectedDate && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                            <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                            <div className="bg-white p-6 rounded-lg shadow-lg md:w-1/3 w-1/1">
                                 <h2 className="text-xl font-bold mb-4">Horas disponibles</h2>
                                 <p className="text-gray-600 mb-4">
                                     Selecciona la hora disponible para agendar tu cita
@@ -498,7 +501,7 @@ const AppointmentProcess = () => {
 
 
                     {step === 4 && selectedAppointment && (
-                        <div className="mt-6 w-full bg-white rounded-3xl p-6">
+                        <div className=" w-full bg-white rounded-3xl p-6">
                             <h2 className="text-lg font-bold mb-4">Confirma los datos para tu cita</h2>
                             <p className="text-gray-600 mb-4">
                                 Confirma la información de tu cita para proceder con el pago.
@@ -507,21 +510,21 @@ const AppointmentProcess = () => {
                                 {/* Primera fila: Costo */}
                                 <div className="flex justify-between items-center mb-4">
                                     <div>
-                                        <p className="text-sm text-blue-600 ">Costo</p>
+                                        <p className="text-sm text-[#0080c8] ">Costo</p>
                                         <p className="text-2xl font-bold mt-0">${selectedAppointment.costo.toFixed(2)}</p>
                                     </div>
                                 </div>
 
                                 {/* Segunda fila: Médico y Fecha */}
-                                <div className="flex justify-between items-center mb-4">
+                                <div className="flex md:flex-row flex-col justify-between md:items-center mb-4 gap-4 md:gap-0">
                                     <div>
-                                        <p className="text-sm text-blue-600">Médico</p>
+                                        <p className="text-sm text-[#0080c8]">Médico</p>
                                         <p className="text-lg  mt-0">
                                             {getMedicoName(selectedAppointment.medico) || "Médico no asignado"}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-blue-600">Fecha y hora</p>
+                                        <p className="text-sm text-[#0080c8]">Fecha y hora</p>
                                         <p className="text-lg  mt-0">
                                             {selectedAppointment.fecha} / {selectedAppointment.hora}
                                         </p>
@@ -533,7 +536,7 @@ const AppointmentProcess = () => {
 
                                 {/* Cuarta fila: Especialidad */}
                                 <div className="mb-4">
-                                    <p className="text-sm text-blue-600">Especialidad</p>
+                                    <p className="text-sm text-[#0080c8]">Especialidad</p>
                                     <p className="text-lg  mt-0">
                                         {getSpecialtyName(selectedAppointment.especialidad)}
                                     </p>
@@ -541,21 +544,21 @@ const AppointmentProcess = () => {
 
                                 {/* Quinta fila: Dirección */}
                                 <div className="mb-4">
-                                    <p className="text-sm text-blue-600">Dirección</p>
+                                    <p className="text-sm text-[#0080c8]">Dirección</p>
                                     <p className="text-lg  mt-0">{selectedAppointment.direccion}</p>
                                 </div>
 
                                 {/* Botones */}
-                                <div className="flex justify-end mt-16 space-x-2">
+                                <div className="flex flex-col  md:flex-row justify-end mt-16 md:space-x-2 gap-4 ">
                                     <button
                                         onClick={() => setStep(3)} // Regresar al paso anterior
-                                        className="text-black px-4 py-2 rounded border border-gray-400 hover:bg-gray-200"
+                                        className="text-black px-4 py-2 rounded border border-gray-400 hover:bg-gray-200 md:order-2 order-1"
                                     >
                                         Cancelar
                                     </button>
                                     <button
                                         onClick={handleConfirmAppointment}
-                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                        className="bg-[#0080c8] text-white px-4 py-2 rounded hover:bg-blue-600 font-medium md:order-2 "
                                     >
                                         Confirmar
                                     </button>

@@ -53,13 +53,13 @@ const MedicoCard = () => {
     return (
         <div className="relative mx-auto w-full ">
             {/* Título */}
-            <div className="text-center md:my-6">
-                <h2 className="text-lg font-bold text-[#2393E3]">CONOCE A</h2>
-                <h2 className="text-2xl font-normal text-black">Nuestros especialistas</h2>
+            <div className="text-left md:text-center md:my-6 px-6 md:px-0">
+                <h2 className="text-lg font-bold text-[#2393E3] ">CONOCE A</h2>
+                <h2 className="text-2xl font-extralight text-black">Nuestros especialistas</h2>
             </div>
 
             {/* Contenedor principal */}
-            <div className="flex flex-col md:flex-row gap-6 items-center justify-center mx-auto w-full px-6 ">
+            <div className="flex flex-col md:flex-row gap-6 items-center justify-center mx-auto w-full md:px-6 py-6">
                 {/* Barra lateral con indicadores */}
                 <div className="hidden md:flex flex-col gap-2">
                     {randomMedicos.map((_, index) => (
@@ -83,7 +83,7 @@ const MedicoCard = () => {
                     {/* Foto del médico */}
                     <div className="w-full md:w-1/2 h-[300px] md:h-full">
                         <img
-                            className="rounded-lg w-full h-full object-cover"
+                            className="md:rounded-lg rounded-2xl w-full h-full object-cover"
                             src={medico.foto || "https://via.placeholder.com/400x300?text=Sin+Foto"}
                             alt={`Foto de ${medico.nombre} ${medico.apellido}`}
                             onError={(e) => {

@@ -39,36 +39,21 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
     };
 
     return (
-        <div className="p-6 rounded-lg w-full bg-transparent">
+        <div className="p-0` md:p-3 rounded-lg w-full bg-transparent">
 
             {/* Encabezado en una fila */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex md:items-center items-start justify-between mb-4">
                 {/* Flecha y texto "Fechas Disponibles" */}
-                <div className="flex items-center space-x-2">
-                    <button onClick={handleBack} className="text-black flex items-center focus:outline-none">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            className="w-5 h-5 "
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M15 19l-7-7 7-7"
-                            />
-                        </svg>
-                    </button>
-                    <h2 className="text-lg font-bold">Selecciona una fechas disponible</h2>
+                <div className="flex flex-col md:flex-row  md:items-center items-start  space-x-2">
+
+                    <h2 className="text-lg font-bold mt-8 md:mt-0">Selecciona una fechas disponible</h2>
                 </div>
 
                 {/* Mes y flechas de navegación */}
 
             </div>
-            <div className='flex justify-end'>
-                <div className="flex items-end space-x-2">
+            <div className="flex md:justify-end justify-between mt-12 md:mt-0">
+                <div className="flex items-center w-full justify-between md:justify-end">
                     {/* Flecha de retroceso */}
                     <button
                         onClick={() => {
@@ -82,14 +67,14 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                                     activeStartDate.getMonth() - 1,
                                     1
                                 );
-                                setActiveStartDate(newStartDate); // Actualiza el estado
-                                handleMonthChange({ activeStartDate: newStartDate }); // Sincroniza con el calendario
+                                setActiveStartDate(newStartDate);
+                                handleMonthChange({ activeStartDate: newStartDate });
                             }
                         }}
                         className={`${activeStartDate.getFullYear() === today.getFullYear() &&
                             activeStartDate.getMonth() === today.getMonth()
-                            ? 'text-gray-400 cursor-not-allowed'
-                            : 'text-blue-500'
+                            ? 'text-gray-400 cursor-not-allowed text-lg'
+                            : 'text-blue-500 text-lg'
                             }`}
                         disabled={
                             activeStartDate.getFullYear() === today.getFullYear() &&
@@ -100,7 +85,7 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                     </button>
 
                     {/* Mes y año */}
-                    <span className="text-sm font-normal">
+                    <span className="md:text-sm text-lg font-normal text-center">
                         {activeStartDate.toLocaleDateString('es-ES', {
                             year: 'numeric',
                             month: 'long',
@@ -119,15 +104,17 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                                 activeStartDate.getMonth() + 1,
                                 1
                             );
-                            setActiveStartDate(newStartDate); // Actualiza el estado
-                            handleMonthChange({ activeStartDate: newStartDate }); // Sincroniza con el calendario
+                            setActiveStartDate(newStartDate);
+                            handleMonthChange({ activeStartDate: newStartDate });
                         }}
-                        className="text-blue-500"
+                        className="text-blue-500 text-lg"
                     >
                         &gt;
                     </button>
                 </div>
             </div>
+
+
 
             {/* Calendario */}
             {availableDates && availableDates.length > 0 ? (
@@ -192,6 +179,30 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
             ) : (
                 <p className="text-gray-500">No hay fechas disponibles.</p>
             )}
+
+            <button onClick={handleBack}
+                className="bg-white border border-gray-300 
+                        rounded-lg px-6 py-3 md:py-2 text-black 
+                        font-normal text-[14px] order-2 md:order-1 
+                        w-fit mt-8 flex justify-start gap-4 items-center">
+                {/* <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5 "
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 19l-7-7 7-7"
+                    />
+                </svg> */}
+                <p>
+                    Regresar
+                </p>
+            </button>
         </div>
 
     );

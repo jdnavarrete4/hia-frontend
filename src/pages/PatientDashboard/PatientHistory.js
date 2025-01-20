@@ -157,36 +157,50 @@ const PatientHistory = () => {
                                             <td colSpan="4" className="p-3 bg-gray-50">
                                                 {/* Diagnóstico */}
                                                 {appt.diagnostico && (
-                                                    <div className="mb-4">
-                                                        <h3 className="font-semibold text-gray-800">Diagnóstico</h3>
+                                                    <div className="mb-4 ">
+                                                        <p className="font-semibold text-gray-800 text-xl">Informacion de cita</p>
+                                                        <p className="font-semibold text-gray-800 text-lg">Diagnóstico</p>
                                                         <p>
-                                                            <strong>Descripción:</strong> {appt.diagnostico.descripcion}
+                                                            <strong>Tipo enfermedad:</strong> <br></br> {appt.diagnostico.enfermedad}
                                                         </p>
+
+                                                        <p>
+                                                            <strong>Descripción:</strong> <br></br> {appt.diagnostico.descripcion}
+                                                        </p>
+
+
                                                         <p>
                                                             <strong>Es COVID:</strong> {appt.diagnostico.es_covid ? "Sí" : "No"}
                                                         </p>
-                                                        <p>
-                                                            <strong>Enfermedad:</strong> {appt.diagnostico.enfermedad}
-                                                        </p>
+                                                        <hr className="border-t-1 border-blue-300 my-4" />
                                                     </div>
                                                 )}
 
                                                 {/* Receta */}
+                                                <p className="font-semibold text-gray-800 text-lg">Receta</p>
                                                 {appt.recetas?.map((receta, index) => (
                                                     <div key={index} className="mb-2">
+
+
+                                                        <div className="flex justify-between items-center">
+                                                            <p>
+                                                                <strong>Medicamento:</strong> {receta.nombre_medicamento}
+                                                            </p>
+                                                            <p>
+                                                                <strong>Dosis:</strong> {receta.dosis}
+                                                            </p>
+                                                            <p>
+                                                                <strong>Duración:</strong> {receta.duracion}
+                                                            </p>
+                                                        </div>
+
                                                         <p>
-                                                            <strong>Medicamento:</strong> {receta.nombre_medicamento}
+                                                            <strong>Prescripción:</strong> <br></br> {receta.prescripcion}
                                                         </p>
-                                                        <p>
-                                                            <strong>Dosis:</strong> {receta.dosis}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Duración:</strong> {receta.duracion}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Prescripción:</strong> {receta.prescripcion}
-                                                        </p>
+                                                        <hr className="border-t-[1px] border-blue-300 my-4" />
+
                                                     </div>
+
                                                 ))}
                                             </td>
                                         </tr>

@@ -17,10 +17,30 @@ const MedicalDashboard = () => {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
     const [error, setError] = useState(null);
+    const [doctorData, setDoctorData] = useState(null); // Datos del paciente
     const navigate = useNavigate();
 
     const medicoId = localStorage.getItem("medico_id");
     const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        const fetchDoctorData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8000/api/doctor-data/', {
+                    headers: {
+                        Authorization: `Token ${token}`, // Enviar el token de autenticación
+                    },
+                });
+                setDoctorData(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error al recuperar los datos del paciente:', error);
+            }
+        };
+
+        fetchDoctorData();
+    }, []);
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -72,23 +92,26 @@ const MedicalDashboard = () => {
 
 
     return (
-        <div className="bg-[#f9faff] min-h-screen relative ">
+        <div className="bg-[#f9faff] min-h-screen relative pb-[100px]">
             <MenuDoctor />
-            <div className="flex flex-col  items-center min-h-screen absolute left-[289px] right-0 top-0 px-8 overflow-auto">
+            <div className="lg:pl-[289px]  md:max-w-full flex flex-col 
+            items-center min-h-screen overflow-auto  gap-7 md:pt-10 pt-[120px] p-6 md:p-0 ">
 
 
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 w-full ">
                     <div className="flex flex-col gap-8 items-start justify-center relative w-full col-span-2">
                         <div className="flex flex-col gap-[22px] items-start justify-start">
                             <div className="text-black text-left font-['Mulish-SemiBold',_sans-serif] text-2xl font-semibold">
-                                Bienvenido Dr. Bayter
+                                Bienvenido Dr. {doctorData ? `${doctorData.nombre} ${doctorData.apellido}` : "Cargando..."}
                             </div>
                             <div className="text-black text-left font-['Mulish-Light',_sans-serif] text-sm font-light">
                                 Utiliza las opciones disponibles en nuestro sistema
                             </div>
                         </div>
-                        <div className="bg-[#91c9f1] rounded-3xl p-8 flex flex-row gap-2.5 items-center justify-start w-full relative" style={{ boxShadow: '0px 20px 20px 0px rgba(0, 0, 0, 0.08)' }}>
-                            <div className="flex flex-col gap-8 items-start justify-start w-[360px]">
+                        <div className="bg-[#91c9f1] rounded-3xl p-8 
+                        flex md:flex-row flex:col gap-2.5 items-center justify-start 
+                        w-full relative mt-[80px] md:mt-0" style={{ boxShadow: '0px 20px 20px 0px rgba(0, 0, 0, 0.08)' }}>
+                            <div className="flex flex-col gap-8 items-start justify-start w-[360px] mt-[200px] md:mt-0 ">
                                 <div className="text-white text-left font-['Poppins-Medium',_sans-serif] text-xl font-medium" style={{ letterSpacing: '-0.01em' }}>
                                     Bienestar del Personal Médico
                                 </div>
@@ -96,7 +119,8 @@ const MedicalDashboard = () => {
                                     Nuestro sistema está diseñado para apoyar y facilitar tu labor diaria, asegurando que puedas ofrecer el mejor cuidado a tus pacientes. ¡Gracias por tu dedicación y esfuerzo!
                                 </div>
                             </div>
-                            <img className="w-[341px] h-[277px] absolute left-[360.5px] top-[-72px] object-cover" src={Medicos} />
+
+                            <img className="w-[341px] h-[277px] absolute md:left-[360.5px] right-1 md:right-0 top-[-72px] object-cover" src={Medicos} />
                         </div>
                     </div>
                     <div className="w-96 bg-white rounded-lg p-6 ">
@@ -106,21 +130,21 @@ const MedicalDashboard = () => {
                             <div className="flex items-center space-x-4">
                                 <img className="w-20 h-14 rounded-md" src={c1} alt="Curso Farmacia" />
                                 <div>
-                                    <h4 className="font-medium">Curso Farmacia Especializada</h4>
+                                    <h4 className="font-medium text-lg">Curso <br></br> Farmacia Especializada</h4>
                                     <p className="text-gray-500 text-sm">12/Junio/2024</p>
                                 </div>
                             </div>
                             <div className="flex items-center space-x-4">
                                 <img className="w-20 h-14 rounded-md" src={c2} alt="Expertos ADN" />
                                 <div>
-                                    <h4 className="font-medium">Consejos Expertos ADN</h4>
+                                    <h4 className="font-medium text-lg">Consejos <br></br> Expertos ADN</h4>
                                     <p className="text-gray-500 text-sm">12/Junio/2024</p>
                                 </div>
                             </div>
                             <div className="flex items-center space-x-4">
                                 <img className="w-20 h-14 rounded-md" src={c3} alt="Robotica Médica" />
                                 <div>
-                                    <h4 className="font-medium">Curso Robotica Médica</h4>
+                                    <h4 className="font-medium text-lg ">Curso <br></br> Robotica Médica</h4>
                                     <p className="text-gray-500 text-sm">12/Junio/2024</p>
                                 </div>
                             </div>
@@ -142,11 +166,11 @@ const MedicalDashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-[#f9faff] min-h-screen">
+                        <div className="bg-[#fffff] ">
                             {/* Tabla de citas */}
 
 
-                            <table className="min-w-full bg-white rounded-lg">
+                            <table className="min-w-full  bg-white rounded-lg">
                                 <thead>
                                     <tr>
                                         <th className="py-2 px-4 text-left text-[#B5B7C0]">Paciente</th>
@@ -161,8 +185,15 @@ const MedicalDashboard = () => {
                                         appointments.map((appointment, index) => (
                                             <tr
                                                 key={index}
-                                                className="border-b border-gray-200 cursor-pointer hover:bg-gray-100"
-                                                onClick={() => handleRowClick(appointment)}
+                                                className={`border-b border-gray-200 ${appointment.estado === "finalizada"
+                                                    ? "cursor-not-allowed"
+                                                    : "cursor-pointer hover:bg-gray-100"
+                                                    }`}
+                                                onClick={
+                                                    appointment.estado === "finalizada"
+                                                        ? null // No hacer nada si está finalizada
+                                                        : () => handleRowClick(appointment)
+                                                }
                                             >
                                                 <td className="py-4 px-4">
                                                     {appointment.paciente.first_name} {appointment.paciente.last_name}

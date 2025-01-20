@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import MedicoCard from './MedicoCard';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faSearch, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSearch, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
 import Carrusel from './Specialties';
 import Footer from './footer';
 
@@ -32,7 +32,7 @@ const Home = () => {
         }
     ];
     return (
-        <div className="relative bg-white min-h-screen overflow-x-hidden">
+        <div className="relative bg-white min-h-screen  ">
             {/* Menú superior */}
             <div className="absolute top-0 left-0  flex items-end justify-between px-4 py-4 md:px-6 md:py-4 z-10 w-full">
                 {/* Logo y enlaces */}
@@ -46,24 +46,32 @@ const Home = () => {
                 {/* Búsqueda e inicio de sesión */}
                 <div className="flex items-center gap-4 md:gap-6">
                     {/* Icono de buscar (blanco) */}
-                    <FontAwesomeIcon icon={faSearch} className="text-white text-base md:text-lg cursor-pointer" />
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        className="text-white text-base md:text-lg cursor-pointer"
+                    />
 
-                    {/* Icono de usuario (negro) */}
+                    {/* Icono de usuario (web) */}
                     <Link
                         to="/login"
-                        className="bg-white rounded-3xl px-4 py-2 md:px-6 md:py-2 flex items-center gap-2 border border-gray-300 hover:shadow-lg"
+                        className="hidden md:flex bg-white rounded-3xl px-4 py-2 md:px-6 md:py-2 items-center gap-2 border border-gray-300 hover:shadow-lg"
                     >
                         <FontAwesomeIcon icon={faUser} className="text-black" />
                         <span className="hidden md:block text-black font-semibold text-sm md:text-base">
                             Iniciar Sesión
                         </span>
                     </Link>
+
+                    {/* Ícono de menú hamburguesa (móvil) */}
+                    <button className="block md:hidden text-black text-lg cursor-pointer">
+                        <FontAwesomeIcon icon={faBars} />
+                    </button>
                 </div>
 
             </div>
 
             {/* Contenido principal */}
-            <div className="relative flex flex-col md:flex-row items-stretch md:h-[90vh]  mx-auto ">
+            <div className="relative flex flex-col md:flex-row items-stretch md:h-[90vh]  mx-auto  ">
                 {/* Columna izquierda: Texto */}
                 <div className="flex flex-col justify-center items-start text-left px-4 pt-24 md:pt-35 md:px-16 w-full md:w-1/2 z-10">
                     <h1 className="text-black font-light text-3xl md:text-[64px] leading-snug montserrat-alternates">
@@ -96,7 +104,7 @@ const Home = () => {
 
             {/* Carrusel */}
 
-            <div className="relative md:-mt-[70px] z-20 w-full overflow-hidden">
+            <div className="relative md:-mt-[70px]   overflow-x-hidden z-50">
                 <Carrusel items={items} />
             </div>
 
@@ -104,14 +112,13 @@ const Home = () => {
 
 
             {/* Médicos */}
-            <div className="flex justify-center items-center w-full  md:max-w-screen-xl mx-auto  overflow-hidden">
+            <div className="flex justify-center items-center w-full  md:max-w-screen-lg mx-auto  overflow-hidden">
                 <MedicoCard />
             </div>
 
             {/* Footer */}
             <Footer />
         </div>
-
 
 
 

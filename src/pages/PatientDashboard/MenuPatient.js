@@ -42,23 +42,23 @@ const MenuAdmin = () => {
                 {/* Parte superior: Logo y Menú */}
                 <div className="flex flex-col gap-4 items-start w-full">
                     <img className="hospital-logo w-44" src={LogoHospital} alt="Logo" />
-
-                    <div className="flex flex-col  items-start w-full mt-8">
+                    <div className="w-full border-t border-gray-300"></div>
+                    <div className="flex flex-col  items-start w-full mt-2">
                         <Link
                             to="/pacientedashboard"
                             className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/pacientedashboard"
-                                ? " text-[#0080c8] "
+                                ? " text-black bg-[#C7E8FF] "
                                 : "text-gray-500"
                                 }`}
                         >
                             <FontAwesomeIcon icon={faChartBar} className="w-4 h-4" />
-                            <div className="font-semibold text-base">Agendamiento de citas</div>
+                            <div className="font-normal text-base">Agendamiento de citas</div>
                         </Link>
 
                         <Link
                             to="/historial-citas"
                             className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/historial-citas"
-                                ? " text-[#0080c8] "
+                                ? "  text-black bg-[#C7E8FF] "
                                 : "text-gray-500"
                                 }`}
                         >
@@ -99,7 +99,7 @@ const MenuAdmin = () => {
 
 
             {/* Menú hamburguesa para pantallas pequeñas */}
-            <div className="bg-white p-4 flex items-center justify-between w-full fixed top-0 left-0 lg:hidden z-50">
+            <div className="bg-[#f9faff] p-4 flex items-center justify-between w-full fixed top-0 left-0 lg:hidden z-50">
                 <img className="hospital-logo w-38 h-10" src={LogoHospital} alt="Logo" />
                 <button
                     className="text-gray-500 p-2 rounded focus:outline-none"
@@ -111,7 +111,7 @@ const MenuAdmin = () => {
 
             {/* Menú desplegable para pantallas pequeñas */}
             {menuOpen && (
-                <div className="bg-white p-4 flex flex-col gap-4 fixed top-14 left-0 w-full z-50 shadow-lg lg:hidden">
+                <div className="bg-[#f9faff] p-4 flex flex-col gap-4 fixed top-14 left-0 w-full z-50 shadow-lg lg:hidden">
                     <div className="flex flex-col gap-2.5 items-start">
                         <div className="bg-[#2393e3] bg-opacity-50 rounded-lg p-2.5 flex items-center gap-2.5 w-full">
                             <FontAwesomeIcon icon={faChartBar} className="w-4 h-4 text-white" />

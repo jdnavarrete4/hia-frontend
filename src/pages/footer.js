@@ -44,14 +44,14 @@ const Footer = () => {
                 <hr className="w-full border-t-1 border-gray-300" />
 
                 {/* Enlaces y redes sociales */}
-                <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center justify-between w-full">
+                <div className="flex flex-col md:flex-row gap-8 md:gap-16 md:items-center items-start justify-between w-full px-4">
                     {/* Copyright */}
                     <div className="text-center text-sm md:text-base font-bold text-gray-700">
                         © 2024 Copyright
                     </div>
 
                     {/* Links */}
-                    <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center">
+                    <div className="flex flex-row gap-6 md:gap-10 items-center">
                         <span className="text-sm md:text-base font-bold text-gray-700 cursor-pointer hover:text-[#2393E3]">
                             Equipo
                         </span>
@@ -64,7 +64,7 @@ const Footer = () => {
                     </div>
 
                     {/* Social Media Icons */}
-                    <div className="flex space-x-4">
+                    <div className="flex space-x-4 pb-12">
                         <FontAwesomeIcon icon={faFacebook} size="lg" className="text-gray-600 hover:text-[#2393E3] cursor-pointer" />
                         <FontAwesomeIcon icon={faTwitter} size="lg" className="text-gray-600 hover:text-[#2393E3] cursor-pointer" />
                         <FontAwesomeIcon icon={faInstagram} size="lg" className="text-gray-600 hover:text-[#2393E3] cursor-pointer" />

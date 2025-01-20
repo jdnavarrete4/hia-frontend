@@ -72,11 +72,18 @@ const Login = () => {
 
     return (
         <div className="login-page flex flex-col h-screen bg-white overflow-hidden">
-            <img className="background-image w-1/2 h-full absolute right-0 top-0 object-cover" src={banner1} alt="Background" />
-            <div className="login-header flex items-center pl-12 pt-8">
+            {/* Imagen de fondo: Visible solo en web */}
+            <img
+                className="background-image hidden md:block w-1/2 h-full absolute right-0 top-0 object-cover"
+                src={banner1}
+                alt="Background"
+            />
+
+            {/* Contenedor del formulario */}
+            <div className="login-header flex items-center pl-6 pt-8">
                 <img className="hospital-logo w-30 h-10" src={LogoHospital} alt="Hospital Logo" />
             </div>
-            <div className="login-form-container flex flex-col items-start justify-center p-12 w-1/3">
+            <div className="login-form-container flex flex-col items-start justify-center p-6 w-full md:w-1/3">
                 <div className="login-title text-4xl font-semibold">Iniciar Sesión</div>
                 <div className="login-subtitle text-base font-normal mt-2">
                     Inicia sesión y accede a tus servicios disponibles.
@@ -111,19 +118,21 @@ const Login = () => {
                         <FontAwesomeIcon icon={faChevronRight} />
                     </button>
                 </form>
-                <div className="login-social mt-4">
+                <div className="login-social mt-24">
                     <div className="login-social-title text-gray-600 text-base font-semibold">Puedes iniciar con</div>
                     <button className="google-login flex items-center bg-white rounded-full mt-2 px-6 py-3 shadow-custom">
                         <FontAwesomeIcon className="mr-2" icon={faGoogle} />
                         <span className="google-text">Cuenta de Google</span>
                     </button>
+                    <div className="signup-link mt-8 text-base font-semibold">
+                        No tienes una cuenta disponible?
+                        <Link to="/register" className="text-blue-600"> Crea una nueva cuenta</Link>
+                    </div>
                 </div>
-                <div className="signup-link mt-24 text-base font-semibold">
-                    No tienes una cuenta disponible?
-                    <Link to="/register" className="text-blue-600"> Crea una nueva cuenta</Link>
-                </div>
+
             </div>
         </div>
+
     );
 };
 
