@@ -96,9 +96,9 @@ const AppointmentProcess = () => {
     };
 
 
+
     // Buscar fechas disponibles
-    // Buscar fechas disponibles
-    const handleSearchAvailability = async (startDate, endDate, setActiveStartDate) => {
+    const handleSearchAvailability = async (startDate, endDate, setFirstDateCallback) => {
         if (!selectedSpecialty) {
             alert('Por favor selecciona una especialidad.');
             return;
@@ -128,6 +128,7 @@ const AppointmentProcess = () => {
                 if (!response.data.next) break;
                 currentPage++;
             }
+
             const sortedDates = allDates
                 .filter((d) => {
                     const parsedDate = parse(d.fecha, 'dd-MMMM-yyyy', new Date());
@@ -141,15 +142,20 @@ const AppointmentProcess = () => {
 
             setAvailableDates(sortedDates);
 
-            // Actualiza el mes visible al mes de la primera fecha disponible
+            // Actualiza el mes inicial del calendario al mes de la primera fecha disponible
             if (sortedDates.length > 0) {
                 const firstAvailableDate = parse(sortedDates[0].fecha, 'dd-MMMM-yyyy', new Date());
                 setActiveStartDate(new Date(firstAvailableDate.getFullYear(), firstAvailableDate.getMonth(), 1));
+            } else {
+                // Si no hay fechas disponibles, muestra el mes actual
+                setActiveStartDate(new Date());
             }
         } catch (error) {
             console.error('Error al buscar disponibilidad:', error);
         }
     };
+
+
 
 
 
@@ -209,50 +215,66 @@ const AppointmentProcess = () => {
         // Verifica que 'date.horarios' exista (pero en teoría ya existe)
         setSelectedDate(date);
         setIsModalOpen(true);
+        console.log("Fecha recibida:", date);
     };
-
-
     const handleConfirmAppointment = async () => {
         try {
-            const formattedDate = formatDateToISO(selectedAppointment.fecha);
+            // Validar que selectedAppointment tenga una fecha válida
+            if (!selectedAppointment || !selectedAppointment.fecha) {
+                throw new Error("No se ha seleccionado una fecha válida.");
+            }
 
-            console.log("Datos seleccionados para la cita:", {
-                ...selectedAppointment,
-                fecha: formattedDate,
-                estado: "Reservada",
-            });
+            console.log("Fecha recibida:", selectedAppointment.fecha);
 
-            const response = await axios.post("http://localhost:8000/api/crear-cita/", {
+            // Parsear y formatear la fecha
+            const cleanedDate = selectedAppointment.fecha.trim(); // Elimina espacios extra
+            const parsedDate = parse(cleanedDate, 'dd-MMMM-yyyy', new Date()); // Parsear
+
+            if (isNaN(parsedDate)) {
+                throw new Error("El formato de la fecha es inválido.");
+            }
+
+            const formattedDate = format(parsedDate, 'yyyy-MM-dd'); // Formatear para la API
+
+            console.log("Fecha formateada para la API:", formattedDate);
+
+            // Crear el payload para la API
+            const payload = {
                 paciente: patientData.id,
                 especialidad: selectedAppointment.especialidad,
                 medico: selectedAppointment.medico,
                 fecha: formattedDate,
                 hora: selectedAppointment.hora,
                 direccion: selectedAppointment.direccion,
-                estado: "Reservada", // Incluye el estado
-            });
+                estado: "Reservada",
+            };
+
+            console.log("Payload enviado a la API:", payload);
+
+            // Enviar la solicitud a la API
+            const response = await axios.post("http://localhost:8000/api/crear-cita/", payload);
 
             console.log("Cita creada exitosamente:", response.data);
 
             Swal.fire({
                 icon: "success",
-                title: "Tu reserva fue creada exitosamente",
-                text: "No olvides asistir 10 minutos antes con tu identificación",
+                title: "Cita creada exitosamente",
+                text: "No olvides asistir 10 minutos antes con tu identificación.",
             });
 
-            setStep(1); // Reset
+            setStep(1); // Resetear el flujo
         } catch (error) {
-            console.error("Error al crear la cita:", error);
-            if (error.response && error.response.data) {
-                console.error("Detalles del error:", error.response.data);
-            }
+            console.error("Error al crear la cita:", error.message);
             Swal.fire({
                 icon: "error",
                 title: "Error al crear la cita",
-                text: "Revisa los datos e inténtalo nuevamente.",
+                text: error.message || "Revisa los datos e inténtalo nuevamente.",
             });
         }
     };
+
+
+
 
 
     const formatDateToISO = (dateString) => {
@@ -440,31 +462,21 @@ const AppointmentProcess = () => {
                                         onClick={async () => {
                                             if (!selectedSpecialty) return; // Validación de especialidad
 
-                                            if (availableDates.length > 0) {
-                                                const firstAvailableDate = parse(
-                                                    availableDates[0].fecha,
-                                                    'dd-MMMM-yyyy',
-                                                    new Date()
-                                                );
-                                                const startDate = format(firstAvailableDate, 'yyyy-MM-dd');
-                                                const endDate = format(
-                                                    new Date(firstAvailableDate.getFullYear(), firstAvailableDate.getMonth() + 1, 0),
-                                                    'yyyy-MM-dd'
-                                                );
-                                                await handleSearchAvailability(startDate, endDate, setActiveStartDate);
-                                            } else {
-                                                const today = new Date();
-                                                const threeMonthsLater = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
-                                                const startDate = format(today, 'yyyy-MM-dd');
-                                                const endDate = format(threeMonthsLater, 'yyyy-MM-dd');
-                                                await handleSearchAvailability(startDate, endDate, setActiveStartDate);
-                                            }
+                                            const today = new Date();
+                                            const startDate = format(today, 'yyyy-MM-dd');
+                                            const endDate = format(new Date(today.getFullYear(), today.getMonth() + 3, today.getDate()), 'yyyy-MM-dd');
 
+                                            await handleSearchAvailability(startDate, endDate); // Llama a la función de búsqueda
                                             setStep(3); // Avanza al paso 3
                                         }}
+                                        className={`bg-[#0080c8] text-white px-4 md:py-2 py-3 rounded order-1 ${!selectedSpecialty ? 'opacity-50 cursor-not-allowed' : ''
+                                            }`}
+                                        disabled={!selectedSpecialty}
                                     >
                                         Buscar disponibilidad
                                     </button>
+
+
 
 
 

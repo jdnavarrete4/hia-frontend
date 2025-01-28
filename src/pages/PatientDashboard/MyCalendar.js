@@ -22,7 +22,7 @@ function MyCalendar({
             new Date(activeStartDate.getFullYear(), activeStartDate.getMonth() + 1, 0),
             'yyyy-MM-dd'
         );
-        handleSearchAvailability(startDate, endDate);
+        handleSearchAvailability(startDate, endDate, setActiveStartDate);
     };
 
     // Manejador para seleccionar una fecha
