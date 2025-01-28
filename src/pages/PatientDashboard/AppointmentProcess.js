@@ -7,6 +7,8 @@ import MenuPatient from './MenuPatient';
 import Swal from 'sweetalert2';
 import MyCalendar from './MyCalendar';
 import { parse, format } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+
 
 const AppointmentProcess = () => {
 
@@ -22,6 +24,7 @@ const AppointmentProcess = () => {
     const [selectedAppointment, setSelectedAppointment] = useState(null); // Cita seleccionada
     const [selectedDate, setSelectedDate] = useState(null); // Estado para la fecha seleccionada
     const [selectedSpecialtyName, setSelectedSpecialtyName] = useState(""); // Estado para el nombre de la especialidad
+    const [activeStartDate, setActiveStartDate] = useState(new Date());
 
 
     console.log("Datos del paciente:", patientData);
@@ -94,7 +97,8 @@ const AppointmentProcess = () => {
 
 
     // Buscar fechas disponibles
-    const handleSearchAvailability = async (startDate, endDate) => {
+    // Buscar fechas disponibles
+    const handleSearchAvailability = async (startDate, endDate, setActiveStartDate) => {
         if (!selectedSpecialty) {
             alert('Por favor selecciona una especialidad.');
             return;
@@ -107,53 +111,49 @@ const AppointmentProcess = () => {
             let currentPage = 1;
 
             while (true) {
-                console.log("Solicitando página:", currentPage, {
-                    start_date: startDate,
-                    end_date: endDate,
-                    specialty: selectedSpecialty,
-                });
-
                 const response = await axios.get(
                     `http://localhost:8000/api/fechas-disponibles/${selectedSpecialty}/`,
-                    {
-                        params: {
-                            start_date: startDate,
-                            end_date: endDate,
-                            page: currentPage, // Página actual
-                        },
-                    }
+                    { params: { start_date: startDate, end_date: endDate, page: currentPage } }
                 );
-
-                console.log("Respuesta de la API:", response.data);
 
                 const mappedDates = response.data.results.map((date) => ({
                     ...date,
                     horarios: date.horarios || [],
                     medico_id: date.medico_id || null,
-                    medico: date.medico || "Sin asignar",
+                    medico: date.medico || 'Sin asignar',
                 }));
+
                 allDates = [...allDates, ...mappedDates];
 
-                if (!response.data.next) break; // Salir si no hay más páginas
+                if (!response.data.next) break;
                 currentPage++;
             }
+            const sortedDates = allDates
+                .filter((d) => {
+                    const parsedDate = parse(d.fecha, 'dd-MMMM-yyyy', new Date());
+                    return parsedDate >= new Date(); // Excluir fechas pasadas
+                })
+                .sort((a, b) => {
+                    const dateA = parse(a.fecha, 'dd-MMMM-yyyy', new Date());
+                    const dateB = parse(b.fecha, 'dd-MMMM-yyyy', new Date());
+                    return dateA - dateB;
+                });
 
-            console.log("Fechas combinadas antes del filtro:", allDates);
+            setAvailableDates(sortedDates);
 
-            // Filtrar fechas dentro del rango especificado
-            const filteredDates = allDates.filter((date) =>
-                new Date(date.fecha).getTime() >= new Date(startDate).getTime() &&
-                new Date(date.fecha).getTime() <= new Date(endDate).getTime()
-            );
-
-            console.log("Fechas después del filtro:", filteredDates);
-
-            // Actualiza el estado con las fechas filtradas
-            setAvailableDates(filteredDates);
+            // Actualiza el mes visible al mes de la primera fecha disponible
+            if (sortedDates.length > 0) {
+                const firstAvailableDate = parse(sortedDates[0].fecha, 'dd-MMMM-yyyy', new Date());
+                setActiveStartDate(new Date(firstAvailableDate.getFullYear(), firstAvailableDate.getMonth(), 1));
+            }
         } catch (error) {
-            console.error("Error al buscar disponibilidad:", error);
+            console.error('Error al buscar disponibilidad:', error);
         }
     };
+
+
+
+
 
 
 
@@ -437,43 +437,39 @@ const AppointmentProcess = () => {
                                         Regresar
                                     </button>
                                     <button
-                                        onClick={() => {
-                                            setStep(3);
+                                        onClick={async () => {
+                                            if (!selectedSpecialty) return; // Validación de especialidad
 
-                                            // Obtener la fecha actual y el primer día del mes
-                                            const today = new Date();
-                                            const currentMonth = today.getMonth();
-                                            const currentYear = today.getFullYear();
-
-                                            // Encontrar todos los días disponibles del mes desde hoy
-                                            const remainingDaysInMonth = [];
-                                            for (
-                                                let date = new Date(today);
-                                                date.getMonth() === currentMonth;
-                                                date.setDate(date.getDate() + 1)
-                                            ) {
-                                                remainingDaysInMonth.push(new Date(date));
+                                            if (availableDates.length > 0) {
+                                                const firstAvailableDate = parse(
+                                                    availableDates[0].fecha,
+                                                    'dd-MMMM-yyyy',
+                                                    new Date()
+                                                );
+                                                const startDate = format(firstAvailableDate, 'yyyy-MM-dd');
+                                                const endDate = format(
+                                                    new Date(firstAvailableDate.getFullYear(), firstAvailableDate.getMonth() + 1, 0),
+                                                    'yyyy-MM-dd'
+                                                );
+                                                await handleSearchAvailability(startDate, endDate, setActiveStartDate);
+                                            } else {
+                                                const today = new Date();
+                                                const threeMonthsLater = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
+                                                const startDate = format(today, 'yyyy-MM-dd');
+                                                const endDate = format(threeMonthsLater, 'yyyy-MM-dd');
+                                                await handleSearchAvailability(startDate, endDate, setActiveStartDate);
                                             }
 
-                                            // Formatear las fechas de inicio y fin
-                                            const startDate = format(remainingDaysInMonth[0], 'yyyy-MM-dd');
-                                            const endDate = format(
-                                                new Date(currentYear, currentMonth + 1, 0), // Último día del mes
-                                                'yyyy-MM-dd'
-                                            );
-
-                                            console.log("Fechas enviadas desde el botón:", { startDate, endDate });
-                                            console.log("Días del mes disponibles:", remainingDaysInMonth);
-
-                                            // Llamar a la función con el rango de fechas
-                                            handleSearchAvailability(startDate, endDate);
+                                            setStep(3); // Avanza al paso 3
                                         }}
-                                        className={`bg-[#0080c8] text-white px-4 md:py-2 py-3 rounded order-1 ${!selectedSpecialty ? 'opacity-50 cursor-not-allowed' : ''
-                                            }`}
-                                        disabled={!selectedSpecialty}
                                     >
                                         Buscar disponibilidad
                                     </button>
+
+
+
+
+
 
 
                                 </div>
@@ -483,16 +479,17 @@ const AppointmentProcess = () => {
                     )}
 
                     {step === 3 && (
-                        <div className=" w-full  bg-transparent  md:bg-white rounded-3xl md:p-3 p-0">
+                        <div className="w-full bg-transparent md:bg-white rounded-3xl md:p-3 p-0">
                             <MyCalendar
                                 availableDates={availableDates}
+                                activeStartDate={activeStartDate}
+                                setActiveStartDate={setActiveStartDate}
                                 handleSelectDate={handleSelectDate}
                                 handleSearchAvailability={handleSearchAvailability}
                                 handleBack={() => setStep(2)}
                             />
                         </div>
                     )}
-
 
 
 

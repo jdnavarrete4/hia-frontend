@@ -3,14 +3,20 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { parse, format } from 'date-fns';
 
-function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability, handleBack }) {
-    const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
-    const [activeStartDate, setActiveStartDate] = useState(new Date()); // Controla el mes visible
 
-    const today = new Date(); // Fecha actual
+function MyCalendar({
+    availableDates,
+    activeStartDate,
+    setActiveStartDate,
+    handleSelectDate,
+    handleSearchAvailability,
+    handleBack,
+}) {
+    const today = new Date();
 
+    // Manejador para cambiar el mes visible
     const handleMonthChange = ({ activeStartDate }) => {
-        setActiveStartDate(activeStartDate); // Actualiza el mes visible
+        setActiveStartDate(activeStartDate); // Actualiza el estado global
         const startDate = format(activeStartDate, 'yyyy-MM-dd');
         const endDate = format(
             new Date(activeStartDate.getFullYear(), activeStartDate.getMonth() + 1, 0),
@@ -19,24 +25,24 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
         handleSearchAvailability(startDate, endDate);
     };
 
+    // Manejador para seleccionar una fecha
     const handleChange = (selectedDate) => {
-        setFechaSeleccionada(selectedDate);
-
-        const dayStr = format(selectedDate, 'yyyy-MM-dd');
-        const matchedDate = availableDates.find((obj) => {
-            const objDayStr = format(parse(obj.fecha, 'dd-MMMM-yyyy', new Date()), 'yyyy-MM-dd');
-            return objDayStr === dayStr;
+        const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+        const matchedDate = availableDates.find((date) => {
+            const parsedDate = parse(date.fecha, 'dd-MMMM-yyyy', new Date());
+            return format(parsedDate, 'yyyy-MM-dd') === formattedDate;
         });
 
         handleSelectDate(
             matchedDate || {
-                fecha: dayStr,
+                fecha: formattedDate,
                 horarios: [],
                 medico: 'Sin asignar',
                 medico_id: null,
             }
         );
     };
+
 
     return (
         <div className="p-0` md:p-3 rounded-lg w-full bg-transparent">
@@ -146,17 +152,24 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                         const monthYear = date.toLocaleDateString(locale, { year: 'numeric', month: 'long' });
                         return monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
                     }}
-                    onActiveStartDateChange={handleMonthChange}
+                    onActiveStartDateChange={({ activeStartDate }) => {
+                        setActiveStartDate(activeStartDate); // Actualiza cuando el usuario navega
+                        const startDate = format(activeStartDate, 'yyyy-MM-dd');
+                        const endDate = format(
+                            new Date(activeStartDate.getFullYear(), activeStartDate.getMonth() + 1, 0),
+                            'yyyy-MM-dd'
+                        );
+                        handleSearchAvailability(startDate, endDate); // Busca en el rango del mes actual
+                    }}
                     activeStartDate={activeStartDate} // Sincroniza con el estado
                     onChange={handleChange}
                     tileDisabled={({ date }) => {
-                        if (date < today.setHours(0, 0, 0, 0)) {
-                            return true;
-                        }
-                        return !availableDates.some((d) => {
+                        const isAvailable = availableDates.some((d) => {
                             const parsedDate = parse(d.fecha, 'dd-MMMM-yyyy', new Date());
                             return format(parsedDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
                         });
+
+                        return !isAvailable; // Solo habilita las fechas disponibles
                     }}
                     showNavigation={false} // Oculta el encabezado de navegación
 
