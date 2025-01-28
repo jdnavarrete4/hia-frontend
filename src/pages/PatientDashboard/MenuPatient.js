@@ -66,7 +66,7 @@ const MenuAdmin = () => {
                             <div className="text-base">Historial de citas</div>
                         </Link>
 
-                        <Link
+                        {/* <Link
                             to="/gestion-citas"
                             className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/gestion-citas"
                                 ? "text-[#0080c8] "
@@ -75,7 +75,7 @@ const MenuAdmin = () => {
                         >
                             <FontAwesomeIcon icon={faCalendarCheck} className="w-4 h-4" />
                             <div className="text-base">Gestión de citas</div>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
 

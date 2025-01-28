@@ -46,14 +46,26 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                 {/* Flecha y texto "Fechas Disponibles" */}
                 <div className="flex flex-col md:flex-row  md:items-center items-start  space-x-2">
 
-                    <h2 className="text-lg font-bold mt-8 md:mt-0">Selecciona una fechas disponible</h2>
+                    <h2 className="text-lg font-bold mt-8 md:mt-0">Selecciona una fecha disponible</h2>
                 </div>
 
                 {/* Mes y flechas de navegación */}
 
             </div>
-            <div className="flex md:justify-end justify-between mt-12 md:mt-0">
-                <div className="flex items-center w-full justify-between md:justify-end">
+            <div className="flex-col md:justify-between justify-between mt-12 md:mt-0 md:flex-row flex gap-8 ">
+                {/* Indicadores de Disponibilidad */}
+                <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">Disponible</span>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">Ocupado</span>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                    </div>
+                </div>
+
+                <div className="flex items-center w-full justify-between md:justify-end gap-4">
                     {/* Flecha de retroceso */}
                     <button
                         onClick={() => {
@@ -86,14 +98,19 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
 
                     {/* Mes y año */}
                     <span className="md:text-sm text-lg font-normal text-center">
-                        {activeStartDate.toLocaleDateString('es-ES', {
-                            year: 'numeric',
-                            month: 'long',
-                        }).charAt(0).toUpperCase() +
-                            activeStartDate.toLocaleDateString('es-ES', {
+                        {activeStartDate
+                            .toLocaleDateString('es-ES', {
                                 year: 'numeric',
                                 month: 'long',
-                            }).slice(1)}
+                            })
+                            .charAt(0)
+                            .toUpperCase() +
+                            activeStartDate
+                                .toLocaleDateString('es-ES', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                })
+                                .slice(1)}
                     </span>
 
                     {/* Flecha de avance */}
@@ -113,6 +130,7 @@ function MyCalendar({ availableDates, handleSelectDate, handleSearchAvailability
                     </button>
                 </div>
             </div>
+
 
 
 

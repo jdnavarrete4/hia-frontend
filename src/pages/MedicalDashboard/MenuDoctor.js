@@ -68,14 +68,14 @@ const MenuDoctor = () => {
                             <div className="text-base">Historial de paciente</div>
                         </Link>
 
-                        <Link
+                        {/* <Link
                             to={`/consulta/${citaId || ""}`}
                             className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === `/consulta/${citaId}` ? "text-black bg-[#C7E8FF]" : "text-gray-500"
                                 }`}
                         >
                             <FontAwesomeIcon icon={faCalendarCheck} className="w-4 h-4" />
                             <div className="text-base">Gestión de citas</div>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
 

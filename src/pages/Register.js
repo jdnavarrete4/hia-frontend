@@ -21,10 +21,14 @@ const Register = () => {
         genero: '',
         contrasena: '',
         contrasena_confirmacion: '',
+        tipo_identificacion: '', // Vacío por defecto
+        numero_identificacion: '', // También vacío
+        pais: "Ecuador"
     });
 
     const [provincias, setProvincias] = useState([]);
     const [cantones, setCantones] = useState([]);
+    const [isOtro, setIsOtro] = useState(false);
 
     useEffect(() => {
         const fetchProvincias = async () => {
@@ -41,12 +45,27 @@ const Register = () => {
 
     const handleProvinciaChange = (e) => {
         const selectedProvinciaId = e.target.value;
-        setFormData({ ...formData, provincia: selectedProvinciaId, canton: '' });
 
-        // Encontrar la provincia seleccionada y establecer los cantones
-        const selectedProvincia = provincias.find((provincia) => provincia.id.toString() === selectedProvinciaId);
-        setCantones(selectedProvincia ? selectedProvincia.cantones : []);
+        // Actualizar el estado de provincia y reiniciar canton/pais
+        setFormData({
+            ...formData,
+            provincia: selectedProvinciaId,
+            canton: '', // Reiniciar el cantón
+            pais: selectedProvinciaId === '26' ? '' : 'Ecuador',  // Reinicia "pais" si no es "Otro"
+        });
+
+        // Si selecciona "Otro", no hay cantones, así que activa el campo de país
+        if (selectedProvinciaId === '26') {
+            setCantones([]); // Limpia los cantones
+            setIsOtro(true); // Cambia a input de país
+        } else {
+            // Encontrar la provincia seleccionada y establecer los cantones
+            const selectedProvincia = provincias.find((provincia) => provincia.id.toString() === selectedProvinciaId);
+            setCantones(selectedProvincia ? selectedProvincia.cantones : []);
+            setIsOtro(false); // Usa el select de cantones
+        }
     };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -134,7 +153,12 @@ const Register = () => {
                                 className="form-input w-full bg-white border border-gray-300 rounded-lg p-3 mt-2 placeholder-text"
                                 placeholder="Ingresa tus nombres"
                                 value={formData.nombre}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                    const regex = /^[a-zA-Z\s]*$/; // Permite letras y espacios
+                                    if (regex.test(e.target.value)) {
+                                        handleChange(e); // Solo actualiza si pasa la validación
+                                    }
+                                }}
                             />
                         </div>
                         <div className="form-group flex flex-col">
@@ -145,7 +169,12 @@ const Register = () => {
                                 className="form-input w-full bg-white border border-gray-300 rounded-lg p-3 mt-2 placeholder-text"
                                 placeholder="Ingresa tus apellidos"
                                 value={formData.apellido}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                    const regex = /^[a-zA-Z\s]*$/; // Permite letras y espacios
+                                    if (regex.test(e.target.value)) {
+                                        handleChange(e); // Solo actualiza si pasa la validación
+                                    }
+                                }}
                             />
                         </div>
 
@@ -175,31 +204,38 @@ const Register = () => {
 
                         {/* Número de Cédula y Fecha de Nacimiento */}
                         <div className="form-group flex flex-col">
-                            <label className="text-xs font-medium text-gray-600">*Número de cédula</label>
-                            <input
-                                type="number"
-                                name="numero_cedula"
-                                className="form-input w-full bg-white border border-gray-300 rounded-lg p-3 mt-2 placeholder-text"
-                                placeholder="Ingresa tu número de cédula"
-                                value={formData.numero_cedula}
+                            <label className="text-xs font-medium text-gray-600">*Tipo de Identificación</label>
+                            <select
+                                name="tipo_identificacion"
+                                className="form-select w-full bg-white border border-gray-300 rounded-lg p-2 mt-2"
+                                value={formData.tipo_identificacion}
                                 onChange={handleChange}
-                            />
+                            >
+                                <option value="" disabled>Selecciona el tipo de identificación</option>
+                                <option value="cedula">Cédula</option>
+                                <option value="pasaporte">Pasaporte</option>
+                            </select>
                         </div>
-                        <div className="form-group flex flex-col">
-                            <label className="text-xs font-medium text-gray-600">*Fecha de nacimiento</label>
+
+
+                        <div className="form-group flex flex-col ">
+                            <label className="text-xs font-medium text-gray-600">*Número de Identificación</label>
                             <input
-                                type="date"
-                                name="fecha_nacimiento"
+                                type="text"
+                                name="numero_identificacion"
                                 className="form-input w-full bg-white border border-gray-300 rounded-lg p-3 mt-2 placeholder-text"
-                                placeholder="dd/mm/yy"
-                                value={formData.fecha_nacimiento}
+                                placeholder="Ingresa tu número de identificación"
+                                value={formData.numero_identificacion}
                                 onChange={handleChange}
+                                disabled={!formData.tipo_identificacion}
                             />
                         </div>
 
+
+
                         {/* Provincia y Cantón */}
                         <div className="form-group flex flex-col">
-                            <label className="text-xs font-medium text-gray-600">*Provincia</label>
+                            <label className="text-xs font-medium text-gray-600">*Provincia(País)</label>
                             <select
                                 name="provincia"
                                 value={formData.provincia}
@@ -214,54 +250,89 @@ const Register = () => {
                                 ))}
                             </select>
                         </div>
+                        <div className="form-group flex flex-col ">
+                            <label className="text-xs font-medium text-gray-600">
+                                {isOtro ? "*País de nacimiento" : "*Cantón"}
+
+                            </label>
+                            {isOtro ? (
+                                <input
+                                    type="text"
+                                    name="pais"
+                                    value={formData.pais}
+                                    onChange={(e) => {
+                                        setFormData({
+                                            ...formData,
+                                            pais: e.target.value, // Actualizar el estado con el nuevo valor del input
+                                        });
+                                    }}
+                                    placeholder="Especifica tu país de nacimiento"
+                                    className="form-input w-full bg-white border border-gray-300 rounded-lg p-3 mt-2 placeholder-text"
+                                />
+                            ) : (
+                                <select
+                                    name="canton"
+                                    value={formData.canton}
+                                    onChange={handleChange}
+                                    className="form-select w-full bg-white border border-gray-300 rounded-lg p-2 mt-2"
+                                    disabled={!formData.provincia}
+                                >
+                                    <option value="">Selecciona tu cantón</option>
+                                    {cantones.map((canton) => (
+                                        <option key={canton.id} value={canton.id}>
+                                            {canton.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                        </div>
+
                         <div className="form-group flex flex-col">
-                            <label className="text-xs font-medium text-gray-600">*Cantón</label>
-                            <select
-                                name="canton"
-                                value={formData.canton}
+                            <label className="text-xs font-medium text-gray-600">*Fecha de nacimiento</label>
+                            <input
+                                type="date"
+                                name="fecha_nacimiento"
+                                className="form-input w-full bg-white border border-gray-300 rounded-lg p-3 mt-2 placeholder-text"
+                                placeholder="dd/mm/yy"
+                                value={formData.fecha_nacimiento}
                                 onChange={handleChange}
-                                className="form-select w-full bg-white border border-gray-300 rounded-lg p-2 mt-2"
-                                disabled={!formData.provincia}
-                            >
-                                <option value="">Selecciona tu cantón</option>
-                                {cantones.map((canton) => (
-                                    <option key={canton.id} value={canton.id}>
-                                        {canton.nombre}
-                                    </option>
-                                ))}
-                            </select>
+                                max={new Date().toISOString().split("T")[0]}
+                            />
+                        </div>
+
+
+                        <div className="form-group flex flex-col ">
+                            <label className="text-xs font-medium text-gray-600">*Género</label>
+                            <div className="flex items-center mt-4">
+                                <label className="flex items-center mr-4">
+                                    <input
+                                        type="radio"
+                                        name="genero"
+                                        value="Masculino"
+                                        checked={formData.genero === 'Masculino'}
+                                        onChange={handleChange}
+                                        className="form-radio"
+                                    />
+                                    <span className="ml-2">Masculino</span>
+                                </label>
+                                <label className="flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="genero"
+                                        value="Femenino"
+                                        checked={formData.genero === 'Femenino'}
+                                        onChange={handleChange}
+                                        className="form-radio"
+                                    />
+                                    <span className="ml-2">Femenino</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
 
 
-                    <div className="form-group flex flex-col mt-8">
-                        <label className="text-xs font-medium text-gray-600">*Género</label>
-                        <div className="flex items-center mt-2">
-                            <label className="flex items-center mr-4">
-                                <input
-                                    type="radio"
-                                    name="genero"
-                                    value="Masculino"
-                                    checked={formData.genero === 'Masculino'}
-                                    onChange={handleChange}
-                                    className="form-radio"
-                                />
-                                <span className="ml-2">Masculino</span>
-                            </label>
-                            <label className="flex items-center">
-                                <input
-                                    type="radio"
-                                    name="genero"
-                                    value="Femenino"
-                                    checked={formData.genero === 'Femenino'}
-                                    onChange={handleChange}
-                                    className="form-radio"
-                                />
-                                <span className="ml-2">Femenino</span>
-                            </label>
-                        </div>
-                    </div>
+
                     <div className="w-full py-6">
                         <hr className="border-dashed border-gray-300 my-4" />
                     </div>

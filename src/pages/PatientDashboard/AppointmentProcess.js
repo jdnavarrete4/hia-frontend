@@ -12,8 +12,6 @@ const AppointmentProcess = () => {
 
     const [selectedSpecialty, setSelectedSpecialty] = useState(''); // Especialidad seleccionada
     const [availableDates, setAvailableDates] = useState([]); // Fechas disponibles
-    const [currentPage, setCurrentPage] = useState(1); // Página actual
-    const [totalPages, setTotalPages] = useState(1); // Total de páginas
     const [step, setStep] = useState(1); // Paso actual
     const [patientData, setPatientData] = useState(null); // Datos del paciente
     const [provinces, setProvinces] = useState([]); // Provincias
@@ -102,6 +100,8 @@ const AppointmentProcess = () => {
             return;
         }
 
+        setAvailableDates([]); // Limpia las fechas anteriores
+
         try {
             let allDates = [];
             let currentPage = 1;
@@ -138,8 +138,18 @@ const AppointmentProcess = () => {
                 currentPage++;
             }
 
-            console.log("Fechas combinadas antes de actualizar el estado:", allDates);
-            setAvailableDates(allDates);
+            console.log("Fechas combinadas antes del filtro:", allDates);
+
+            // Filtrar fechas dentro del rango especificado
+            const filteredDates = allDates.filter((date) =>
+                new Date(date.fecha).getTime() >= new Date(startDate).getTime() &&
+                new Date(date.fecha).getTime() <= new Date(endDate).getTime()
+            );
+
+            console.log("Fechas después del filtro:", filteredDates);
+
+            // Actualiza el estado con las fechas filtradas
+            setAvailableDates(filteredDates);
         } catch (error) {
             console.error("Error al buscar disponibilidad:", error);
         }
@@ -246,6 +256,9 @@ const AppointmentProcess = () => {
 
 
     const formatDateToISO = (dateString) => {
+        if (dateString.includes("-") && dateString.split("-").length === 3) {
+            return dateString; // Ya está en formato ISO
+        }
 
         const [day, month, year] = dateString.split("-");
         const months = {
@@ -267,18 +280,7 @@ const AppointmentProcess = () => {
     };
 
 
-    const generateHoursInRange = (startTime, endTime) => {
-        const hours = [];
-        let currentTime = new Date(`1970-01-01T${startTime}:00`);
-        const end = new Date(`1970-01-01T${endTime}:00`);
 
-        while (currentTime <= end) {
-            hours.push(currentTime.toTimeString().slice(0, 5)); // Formato HH:MM
-            currentTime.setMinutes(currentTime.getMinutes() + 60);
-        }
-
-        return hours;
-    };
 
     const getSpecialtyName = (id) => {
         const specialty = specialties.find((spec) => spec.id === id);
@@ -320,9 +322,9 @@ const AppointmentProcess = () => {
                     {/* Primera fila */}
                     <div className="flex md:flex-row flex-col flex-wrap gap-6 md:items-center items-start w-full">
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
-                            <div className="text-[#0080c8] font-medium text-xs">Cédula</div>
+                            <div className="text-[#0080c8] font-medium text-xs capitalize">{patientData.tipo_identificacion}</div>
                             <div className="text-black font-normal text-base">
-                                {patientData.numero_cedula}
+                                {patientData.numero_identificacion}
                             </div>
                         </div>
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
@@ -437,18 +439,43 @@ const AppointmentProcess = () => {
                                     <button
                                         onClick={() => {
                                             setStep(3);
-                                            const currentMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-                                            const currentMonthEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-                                            const startDate = format(currentMonthStart, 'yyyy-MM-dd');
-                                            const endDate = format(currentMonthEnd, 'yyyy-MM-dd');
+
+                                            // Obtener la fecha actual y el primer día del mes
+                                            const today = new Date();
+                                            const currentMonth = today.getMonth();
+                                            const currentYear = today.getFullYear();
+
+                                            // Encontrar todos los días disponibles del mes desde hoy
+                                            const remainingDaysInMonth = [];
+                                            for (
+                                                let date = new Date(today);
+                                                date.getMonth() === currentMonth;
+                                                date.setDate(date.getDate() + 1)
+                                            ) {
+                                                remainingDaysInMonth.push(new Date(date));
+                                            }
+
+                                            // Formatear las fechas de inicio y fin
+                                            const startDate = format(remainingDaysInMonth[0], 'yyyy-MM-dd');
+                                            const endDate = format(
+                                                new Date(currentYear, currentMonth + 1, 0), // Último día del mes
+                                                'yyyy-MM-dd'
+                                            );
+
                                             console.log("Fechas enviadas desde el botón:", { startDate, endDate });
+                                            console.log("Días del mes disponibles:", remainingDaysInMonth);
+
+                                            // Llamar a la función con el rango de fechas
                                             handleSearchAvailability(startDate, endDate);
                                         }}
-                                        className={`bg-[#0080c8] text-white px-4 md:py-2 py-3 rounded order-1 ${!selectedSpecialty ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`bg-[#0080c8] text-white px-4 md:py-2 py-3 rounded order-1 ${!selectedSpecialty ? 'opacity-50 cursor-not-allowed' : ''
+                                            }`}
                                         disabled={!selectedSpecialty}
                                     >
                                         Buscar disponibilidad
                                     </button>
+
+
                                 </div>
                             </div>
 
