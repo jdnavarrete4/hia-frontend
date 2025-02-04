@@ -14,6 +14,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import './global.css';
 import './index.css';
+import PatientSearchAndHistory from './pages/MedicalDashboard/PatientSearchAndHistory';
 
 library.add(fas);
 
@@ -45,6 +46,8 @@ const App = () => {
           <Route path="/pacientedashboard" element={<AppointmentProcces />} />
           <Route path="/historial-citas" element={<PatientHistory />} />
           <Route path="/medicodashboard" element={<MedicalDashboard />} />
+          <Route path="/patientsearchandhistory" element={<PatientSearchAndHistory />} />
+
           <Route
             path="/medicodashboard/consulta/:citaId"
             element={<MedicalConsultationProcess />}

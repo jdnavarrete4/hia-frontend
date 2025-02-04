@@ -58,8 +58,8 @@ const MenuDoctor = () => {
                         </Link>
 
                         <Link
-                            to="/medicodashboard"
-                            className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/"
+                            to="/patientsearchandhistory"
+                            className={`rounded-lg p-2.5 flex items-center gap-2.5 w-full ${location.pathname === "/patientsearchandhistory"
                                 ? "  text-black bg-[#C7E8FF] "
                                 : "text-gray-500"
                                 }`}

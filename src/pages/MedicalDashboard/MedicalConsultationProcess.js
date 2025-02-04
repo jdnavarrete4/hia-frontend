@@ -133,7 +133,7 @@ const MedicalConsultationProcess = () => {
 
             const recetaId = recetaResponse.data[0].id;
 
-            // **Coloca el console.log aquí antes de crear la ficha médica**
+            // * antes de crear la ficha médica**
             console.log("Datos que se enviarán:", {
                 cita_id: parseInt(citaId, 10),
                 diagnostico_id: diagnosticoId,
@@ -210,12 +210,12 @@ const MedicalConsultationProcess = () => {
                             <p className="text-gray-600">{`${paciente.first_name} ${paciente.last_name}`}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-bold text-gray-400">Cédula</p>
-                            <p className="text-gray-600">{paciente.numero_cedula}</p>
+                            <p className="text-sm font-bold text-gray-400 capitalize">{paciente.tipo_identificacion}</p>
+                            <p className="text-gray-600">{paciente.numero_identificacion}</p>
                         </div>
                         <div>
                             <p className="text-sm font-bold text-gray-400">Dirección</p>
-                            <p className="text-gray-600">{paciente.direccion || "Sin dirección"}</p>
+                            <p className="text-gray-600">{paciente.pais || "Sin dirección"}</p>
                         </div>
                         <div>
                             <p className="text-sm font-bold text-gray-400">Celular</p>

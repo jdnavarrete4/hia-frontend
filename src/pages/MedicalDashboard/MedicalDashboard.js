@@ -68,7 +68,9 @@ const MedicalDashboard = () => {
     }, [medicoId, token]);
 
     const handleRowClick = (appointment) => {
-        navigate(`/medicodashboard/consulta/${appointment.id}`);
+        setIsOverlayVisible(true);
+        setSelectedAppointment(appointment); // Establece la cita seleccionada
+
     };
 
     const handleCancel = () => {
@@ -77,9 +79,14 @@ const MedicalDashboard = () => {
     };
 
     const handleStartConsultation = () => {
-        console.log("Consulta iniciada para:", selectedAppointment);
+        if (!selectedAppointment) {
+            console.error("No hay cita seleccionada");
+            return;
+        }
+        navigate(`/medicodashboard/consulta/${selectedAppointment.id}`);
         setIsOverlayVisible(false);
     };
+
 
     if (isLoading) {
         return <div>Cargando citas...</div>;

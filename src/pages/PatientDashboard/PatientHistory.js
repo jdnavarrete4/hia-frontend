@@ -6,8 +6,8 @@ const PatientHistory = () => {
     const [loading, setLoading] = useState(true); // Indicador de carga
     const [showOverlay, setShowOverlay] = useState(false); // Control del overlay
     const [currentAppointment, setCurrentAppointment] = useState(null); // Cita seleccionada
-    const [selectedRating, setSelectedRating] = useState(null); // Calificación seleccionada
-
+    const [selectedRating, setSelectedRating] = useState(0); // Calificación seleccionada
+    const [hoverRating, setHoverRating] = useState(0);
     // Obtener el token de `localStorage`
     const token = localStorage.getItem("token");
 
@@ -225,9 +225,13 @@ const PatientHistory = () => {
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                         key={star}
-                                        className={`text-2xl ${selectedRating >= star ? "text-blue-500" : "text-gray-300"
+                                        className={`text-2xl ${hoverRating >= star || selectedRating >= star
+                                            ? "text-blue-500"
+                                            : "text-gray-300"
                                             }`}
-                                        onClick={() => setSelectedRating(star)}
+                                        onClick={() => setSelectedRating(star)} // Selecciona la calificación
+                                        onMouseEnter={() => setHoverRating(star)} // Cambia el hover rating
+                                        onMouseLeave={() => setHoverRating(0)} // Restaura el hover rating
                                     >
                                         ★
                                     </button>

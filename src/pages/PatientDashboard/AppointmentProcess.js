@@ -1,13 +1,10 @@
-import LogoHospital from '../../assets/LogoHospital.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faCalendarAlt, faHistory, faNotesMedical, faSignOutAlt, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MenuPatient from './MenuPatient';
 import Swal from 'sweetalert2';
 import MyCalendar from './MyCalendar';
 import { parse, format } from 'date-fns';
-import { enUS } from 'date-fns/locale';
 
 
 const AppointmentProcess = () => {
@@ -17,8 +14,6 @@ const AppointmentProcess = () => {
     const [step, setStep] = useState(1); // Paso actual
     const [patientData, setPatientData] = useState(null); // Datos del paciente
     const [provinces, setProvinces] = useState([]); // Provincias
-    const [selectedProvince, setSelectedProvince] = useState(''); // Provincia seleccionada
-    const [cantons, setCantons] = useState([]); // Cantones disponibles
     const [specialties, setSpecialties] = useState([]); // Especialidades
     const [isModalOpen, setIsModalOpen] = useState(false); // Controla si el modal está abierto
     const [selectedAppointment, setSelectedAppointment] = useState(null); // Cita seleccionada
@@ -62,13 +57,6 @@ const AppointmentProcess = () => {
         fetchProvincesAndCantons();
     }, []);
 
-
-    const handleProvinceChange = (event) => {
-        const selected = event.target.value;
-        setSelectedProvince(selected);
-        const province = provinces.find((prov) => prov.nombre === selected);
-        setCantons(province ? province.cantones : []);
-    };
 
 
     if (!patientData) {
@@ -159,16 +147,6 @@ const AppointmentProcess = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
     const handleSelectHour = (hour, date) => {
         if (!patientData || !patientData.id) {
             console.error("El ID del paciente no está disponible:", patientData);
@@ -197,12 +175,6 @@ const AppointmentProcess = () => {
         setIsModalOpen(false);
         setStep(4);
     };
-
-
-
-
-
-
 
 
 
@@ -276,34 +248,6 @@ const AppointmentProcess = () => {
 
 
 
-
-    const formatDateToISO = (dateString) => {
-        if (dateString.includes("-") && dateString.split("-").length === 3) {
-            return dateString; // Ya está en formato ISO
-        }
-
-        const [day, month, year] = dateString.split("-");
-        const months = {
-            January: "01",
-            February: "02",
-            March: "03",
-            April: "04",
-            May: "05",
-            June: "06",
-            July: "07",
-            August: "08",
-            September: "09",
-            October: "10",
-            November: "11",
-            December: "12",
-        };
-
-        return `${year}-${months[month]}-${day.padStart(2, "0")}`;
-    };
-
-
-
-
     const getSpecialtyName = (id) => {
         const specialty = specialties.find((spec) => spec.id === id);
         return specialty ? specialty.nombre : "Especialidad no encontrada";
@@ -336,13 +280,24 @@ const AppointmentProcess = () => {
                     </div>
                 </div>
                 <div
-                    className="bg-white rounded-3xl p-8 flex flex-col gap-8 items-start w-full max-w-[880px]"
+                    className=
+
+                    {`bg-white rounded-3xl p-8 flex flex-col gap-8 items-start w-full max-w-[880px]
+                        
+                       ${[2, 3, 4].includes(step) ? 'hidden' : ''} 
+                        `}
+
+
                     style={{ boxShadow: '0px 20px 20px 0px rgba(0, 0, 0, 0.01)' }}
                 >
                     <div className="text-black font-semibold text-xl">Datos del paciente</div>
 
                     {/* Primera fila */}
-                    <div className="flex md:flex-row flex-col flex-wrap gap-6 md:items-center items-start w-full">
+                    <div
+                        id='info-patient'
+                        className=
+                        "flex md:flex-row flex-col flex-wrap gap-6 md:items-center items-start w-full"
+                    >
                         <div className="flex flex-col gap-1 items-start flex-1 min-w-[250px]">
                             <div className="text-[#0080c8] font-medium text-xs capitalize">{patientData.tipo_identificacion}</div>
                             <div className="text-black font-normal text-base">
@@ -466,7 +421,7 @@ const AppointmentProcess = () => {
                                             const startDate = format(today, 'yyyy-MM-dd');
                                             const endDate = format(new Date(today.getFullYear(), today.getMonth() + 3, today.getDate()), 'yyyy-MM-dd');
 
-                                            await handleSearchAvailability(startDate, endDate); // Llama a la función de búsqueda
+                                            await handleSearchAvailability(startDate, endDate); //  función de búsqueda
                                             setStep(3); // Avanza al paso 3
                                         }}
                                         className={`bg-[#0080c8] text-white px-4 md:py-2 py-3 rounded order-1 ${!selectedSpecialty ? 'opacity-50 cursor-not-allowed' : ''
@@ -567,7 +522,7 @@ const AppointmentProcess = () => {
                                     </div>
                                 </div>
 
-                                {/* Línea divisora */}
+
                                 <hr className="my-4 border-dashed border-gray-300" />
 
                                 {/* Cuarta fila: Especialidad */}
