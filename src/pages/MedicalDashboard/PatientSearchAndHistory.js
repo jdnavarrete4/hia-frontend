@@ -129,7 +129,15 @@ const PatientSearchAndHistory = () => {
                                                             <p>
                                                                 <strong>Es COVID:</strong> {appt.diagnostico.es_covid ? "Sí" : "No"}
                                                             </p>
-                                                            <hr className="border-t-1 border-blue-300 my-4" />
+
+                                                            <p className="font-semibold text-gray-800 text-lg">Triaje </p>
+
+                                                            <p>
+                                                                <strong>Categoria:</strong> <br></br> {appt.diagnostico.triaje}
+                                                            </p>
+
+
+
                                                         </div>
                                                     )}
 

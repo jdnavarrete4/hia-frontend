@@ -29,6 +29,19 @@ const MedicalConsultationProcess = () => {
         { nombre: "", dosis: "", duracion: "", sugerencias: "" },
     ]);
 
+    const [diagnosticoId, setDiagnosticoId] = useState(null); // Estado para guardar el ID del diagnóstico
+
+
+
+    //  estados del triaje
+    const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState("");
+    const [frecuenciaRespiratoria, setFrecuenciaRespiratoria] = useState("");
+    const [presionArterial, setPresionArterial] = useState("");
+    const [saturacionOxigeno, setSaturacionOxigeno] = useState("");
+    const [nivelConciencia, setNivelConciencia] = useState("");
+    const [puntajeTriaje, setPuntajeTriaje] = useState(null);
+    const [categoriaTriaje, setCategoriaTriaje] = useState("");
+
     useEffect(() => {
         const fetchAppointment = async () => {
             try {
@@ -86,22 +99,103 @@ const MedicalConsultationProcess = () => {
             prevMedicamentos.filter((_, i) => i !== index)
         );
     };
+    // const handleFinalize = async () => {
+    //     if (!appointment || !appointment.medico_id || !appointment.paciente.id) {
+    //         Swal.fire("Error", "Información incompleta de la cita.", "error");
+    //         console.error("appointment:", appointment);
+    //         return;
+    //     }
+
+    //     try {
+    //         // Crear Diagnóstico
+    //         const diagnosticoPayload = {
+    //             descripcion: diagnosis,
+    //             es_covid: isCovid,
+    //             medico_id: appointment.medico_id,
+    //             paciente_id: appointment.paciente.id,
+    //             enfermedad: selectedEnfermedad,
+    //         };
+    //         const diagnosticoResponse = await axios.post(
+    //             `http://127.0.0.1:8000/api/diagnosticos/${citaId}/`,
+    //             diagnosticoPayload,
+    //             {
+    //                 headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+    //             }
+    //         );
+    //         const diagnosticoId = diagnosticoResponse.data.id;
+
+    //         // Crear Receta
+    //         const recetaPayload = {
+    //             diagnostico_id: diagnosticoId,
+    //             medicamentos: medicamentos.map((medicamento) => ({
+    //                 nombre_medicamento: medicamento.nombre,
+    //                 dosis: medicamento.dosis,
+    //                 duracion: medicamento.duracion,
+    //                 prescripcion: medicamento.sugerencias,
+    //             })),
+    //             notas: "Receta generada automáticamente",
+    //         };
+    //         const recetaResponse = await axios.post(
+    //             "http://127.0.0.1:8000/api/recetas/",
+    //             recetaPayload,
+    //             {
+    //                 headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+    //             }
+    //         );
+    //         console.log("Respuesta de la API de recetas:", recetaResponse.data);
+
+    //         const recetaId = recetaResponse.data[0].id;
+
+    //         // * antes de crear la ficha médica**
+    //         console.log("Datos que se enviarán:", {
+    //             cita_id: parseInt(citaId, 10),
+    //             diagnostico_id: diagnosticoId,
+    //             receta_id: recetaId,
+    //         });
+
+    //         // Crear Ficha Médica
+    //         const fichaPayload = {
+    //             cita_id: parseInt(citaId, 10),
+    //             diagnostico_id: diagnosticoId,
+    //             receta_id: recetaId,
+    //         };
+    //         await axios.post(
+    //             "http://127.0.0.1:8000/api/fichas-medicas/",
+    //             fichaPayload,
+    //             {
+    //                 headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+    //             }
+    //         );
+
+    //         Swal.fire("Éxito", "Ficha médica creada correctamente", "success");
+    //         navigate("/medicodashboard");
+    //     } catch (error) {
+    //         console.error("Error al crear la ficha médica:", error);
+    //         Swal.fire("Error", "Ocurrió un problema al crear la ficha médica", "error");
+    //     }
+    // };
+
     const handleFinalize = async () => {
         if (!appointment || !appointment.medico_id || !appointment.paciente.id) {
             Swal.fire("Error", "Información incompleta de la cita.", "error");
-            console.error("appointment:", appointment);
             return;
         }
 
         try {
-            // Crear Diagnóstico
+            // Guardar Diagnóstico con Triaje
             const diagnosticoPayload = {
                 descripcion: diagnosis,
                 es_covid: isCovid,
                 medico_id: appointment.medico_id,
                 paciente_id: appointment.paciente.id,
                 enfermedad: selectedEnfermedad,
+                frecuencia_cardiaca: frecuenciaCardiaca,
+                frecuencia_respiratoria: frecuenciaRespiratoria,
+                presion_arterial: presionArterial,
+                saturacion_oxigeno: saturacionOxigeno,
+                nivel_conciencia: nivelConciencia,
             };
+
             const diagnosticoResponse = await axios.post(
                 `http://127.0.0.1:8000/api/diagnosticos/${citaId}/`,
                 diagnosticoPayload,
@@ -109,8 +203,39 @@ const MedicalConsultationProcess = () => {
                     headers: { Authorization: `Token ${localStorage.getItem("token")}` },
                 }
             );
-            const diagnosticoId = diagnosticoResponse.data.id;
 
+            const diagnosticoId = diagnosticoResponse.data.id;
+            setDiagnosticoId(diagnosticoId); // l ID del diagnóstico 
+
+
+            // puntaje de triaje
+            const { puntaje_total, categoria_triaje } = diagnosticoResponse.data;
+
+            setPuntajeTriaje(diagnosticoResponse.data.puntaje_total);
+            setCategoriaTriaje(diagnosticoResponse.data.categoria_triaje);
+            // Mostrar Triaje al médico
+            await Swal.fire({
+                title: "Triaje Calculado",
+                html: `<strong>Puntaje Total:</strong> ${puntaje_total} <br>
+                       <strong>Categoría:</strong> ${categoria_triaje}`,
+                icon: "info",
+                confirmButtonText: "Continuar con Receta",
+            });
+
+        } catch (error) {
+            console.error("Error al guardar el diagnóstico:", error);
+            Swal.fire("Error", "No se pudo guardar el diagnóstico", "error");
+        }
+    };
+
+    //  guardar la ficha médica 
+    const handleGuardarFichaMedica = async () => {
+        if (!diagnosticoId) {
+            Swal.fire("Error", "No se ha registrado un diagnóstico válido.", "error");
+            return;
+        }
+
+        try {
             // Crear Receta
             const recetaPayload = {
                 diagnostico_id: diagnosticoId,
@@ -122,6 +247,7 @@ const MedicalConsultationProcess = () => {
                 })),
                 notas: "Receta generada automáticamente",
             };
+
             const recetaResponse = await axios.post(
                 "http://127.0.0.1:8000/api/recetas/",
                 recetaPayload,
@@ -129,23 +255,16 @@ const MedicalConsultationProcess = () => {
                     headers: { Authorization: `Token ${localStorage.getItem("token")}` },
                 }
             );
-            console.log("Respuesta de la API de recetas:", recetaResponse.data);
 
             const recetaId = recetaResponse.data[0].id;
 
-            // * antes de crear la ficha médica**
-            console.log("Datos que se enviarán:", {
-                cita_id: parseInt(citaId, 10),
-                diagnostico_id: diagnosticoId,
-                receta_id: recetaId,
-            });
-
-            // Crear Ficha Médica
+            // Crear Ficha Médica (solo después de completar la receta)
             const fichaPayload = {
                 cita_id: parseInt(citaId, 10),
                 diagnostico_id: diagnosticoId,
                 receta_id: recetaId,
             };
+
             await axios.post(
                 "http://127.0.0.1:8000/api/fichas-medicas/",
                 fichaPayload,
@@ -156,9 +275,10 @@ const MedicalConsultationProcess = () => {
 
             Swal.fire("Éxito", "Ficha médica creada correctamente", "success");
             navigate("/medicodashboard");
+
         } catch (error) {
             console.error("Error al crear la ficha médica:", error);
-            Swal.fire("Error", "Ocurrió un problema al crear la ficha médica", "error");
+            Swal.fire("Error", "No se pudo guardar la ficha médica", "error");
         }
     };
 
@@ -173,28 +293,28 @@ const MedicalConsultationProcess = () => {
 
 
     return (
-        <div className="flex min-h-screen bg-[#f9faff]">
+        <div className="min-h-screen pb-12 bg-[#f9faff]">
             {/* Menú lateral con un ancho fijo */}
             <MenuDoctor />
 
             {/* Contenido principal */}
-            <div className="flex-1 ml-[240px] px-56 py-8">
+            <div className="flex-1 lg:ml-[240px] md:px-56 py-8">
                 {/* Título y botón */}
                 <div className="flex items-center justify-between mb-12">
                     <h1 className="text-2xl font-bold text-[#000000]">Gestión de Cita</h1>
                     <button
                         className={`px-4 py-2 rounded-md ${step < 3 ? "bg-[#2393E3] hover:bg-blue-700" : "bg-[#2393E3] hover:bg-blue-700"
                             } text-white`}
-                        onClick={step < 3 ? handleNextStep : handleFinalize}
-
+                        onClick={step < 3 ? handleNextStep : handleGuardarFichaMedica} // ⬅️ Cambiar a handleGuardarFichaMedica
                     >
                         {step < 3 ? "Siguiente" : "Finalizar"}
                     </button>
+
                 </div>
 
                 {/* Indicador de pasos */}
                 <Steps current={step - 1}>
-                    <Steps.Item title="Diagnóstico" />
+                    <Steps.Item title="Diagnóstico y triaje" />
                     <Steps.Item title="Receta" />
                     <Steps.Item title="Confirmación" />
                 </Steps>
@@ -230,30 +350,27 @@ const MedicalConsultationProcess = () => {
 
                 {/* Contenido dinámico según el paso */}
                 {step === 1 && (
-                    <div className="bg-white p-6 rounded-2xl  mt-8">
-                        <h2 className="text-lg font-semibold text-[#000000] mb-4">Diagnóstico</h2>
+                    <div className="bg-white p-6 rounded-2xl mt-8">
+                        <h2 className="text-lg font-semibold text-[#000000] mb-4">Diagnóstico </h2>
                         <p className="text-sm text-gray-500 mb-6">
-                            Selecciona el tipo de enfermedad y escribe el diagnóstico del paciente
+                            Selecciona el tipo de enfermedad y escribe el diagnóstico del paciente .
                         </p>
+
+                        {/* Tipo de Enfermedad */}
                         <div className="mb-6">
-                            <label
-                                htmlFor="diseaseType"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
-                                *Tipo de enfermedad
+                            <label htmlFor="diseaseType" className="block text-sm font-medium text-gray-700 mb-1">
+                                *Tipo de enfermedad(padecimiento)
                             </label>
                             <div className="relative">
-                                {/* Input con ícono */}
-                                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                                <div className="flex items-center border border-gray-300 rounded-md p-2">
                                     <input
                                         type="text"
                                         placeholder="Escribe para buscar..."
                                         className="w-full focus:outline-none"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        onFocus={() => setDropdownVisible(true)} // Mostrar dropdown al enfocar
+                                        onFocus={() => setDropdownVisible(true)}
                                     />
-                                    {/* Ícono para abrir el dropdown */}
                                     <button
                                         onClick={() => setDropdownVisible(!dropdownVisible)}
                                         type="button"
@@ -273,8 +390,6 @@ const MedicalConsultationProcess = () => {
                                         </svg>
                                     </button>
                                 </div>
-
-                                {/* Lista desplegable con coincidencias */}
                                 {dropdownVisible && (
                                     <ul className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg w-full max-h-48 overflow-y-auto mt-1">
                                         {enfermedades
@@ -286,9 +401,9 @@ const MedicalConsultationProcess = () => {
                                                     key={enfermedad.id}
                                                     className="p-2 cursor-pointer hover:bg-blue-100"
                                                     onClick={() => {
-                                                        setSelectedEnfermedad(enfermedad.id); // Establecer el ID en lugar del nombre
-                                                        setSearchTerm(enfermedad.nombre); // Mostrar el nombre en el input
-                                                        setDropdownVisible(false); // Ocultar dropdown después de seleccionar
+                                                        setSelectedEnfermedad(enfermedad.id);
+                                                        setSearchTerm(enfermedad.nombre);
+                                                        setDropdownVisible(false);
                                                     }}
                                                 >
                                                     {enfermedad.nombre}
@@ -299,11 +414,9 @@ const MedicalConsultationProcess = () => {
                             </div>
                         </div>
 
+                        {/* Campo Diagnóstico */}
                         <div className="mb-6">
-                            <label
-                                htmlFor="diagnosis"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
+                            <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700 mb-1">
                                 Escribe el diagnóstico
                             </label>
                             <textarea
@@ -315,6 +428,8 @@ const MedicalConsultationProcess = () => {
                                 placeholder="Describe el diagnóstico del paciente..."
                             ></textarea>
                         </div>
+
+                        {/* Checkbox COVID */}
                         <div className="flex items-center mt-4">
                             <label htmlFor="isCovid" className="mr-2 text-sm font-medium text-gray-700">
                                 Paciente con Covid
@@ -327,8 +442,91 @@ const MedicalConsultationProcess = () => {
                                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
                         </div>
+
+                        {/* Campos de Triaje */}
+                        <h2 className="text-lg font-semibold text-[#000000] mt-8 mb-3" >Triaje</h2>
+                        <p className="text-sm text-gray-500 mb-6" >Llena los campos de
+                            signos vitales para el cálculo del triaje.</p>
+                        <div className="mt-6 grid md:grid-cols-2 gap-4">
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Frecuencia Cardiaca (ej: 100-110)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={frecuenciaCardiaca}
+                                    onChange={(e) => setFrecuenciaCardiaca(e.target.value)}
+                                    placeholder="Ej: 100-110"
+                                    className="w-full border border-gray-300 rounded-md p-2"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Frecuencia Respiratoria
+                                </label>
+                                <input
+                                    type="number"
+                                    value={frecuenciaRespiratoria}
+                                    onChange={(e) => setFrecuenciaRespiratoria(e.target.value)}
+                                    placeholder="Valor numérico"
+                                    className="w-full border border-gray-300 rounded-md p-2"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Presión Arterial (mmHg)
+                                </label>
+                                <input
+                                    type="number"
+                                    value={presionArterial}
+                                    onChange={(e) => setPresionArterial(e.target.value)}
+                                    placeholder="Valor numérico"
+                                    className="w-full border border-gray-300 rounded-md p-2"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Saturación de Oxígeno (%)
+                                </label>
+                                <input
+                                    type="number"
+                                    value={saturacionOxigeno}
+                                    onChange={(e) => setSaturacionOxigeno(e.target.value)}
+                                    placeholder="Valor numérico"
+                                    className="w-full border border-gray-300 rounded-md p-2"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Nivel de Conciencia
+                                </label>
+                                <select
+                                    value={nivelConciencia}
+                                    onChange={(e) => setNivelConciencia(e.target.value)}
+                                    className="w-full border border-gray-300 rounded-md p-2"
+                                >
+                                    <option value="">Seleccione</option>
+                                    <option value="alerta">Alerta</option>
+                                    <option value="voz">Responde a voz</option>
+                                    <option value="dolor">Responde al dolor</option>
+                                    <option value="no_responde">No responde</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Botón Ver Triaje */}
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={handleFinalize}
+                                className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                            >
+                                Ver Triaje y Guardar
+                            </button>
+                        </div>
                     </div>
                 )}
+
 
                 {step === 2 && (
                     <div className="bg-white p-6 rounded-2xl  mt-4">
@@ -424,12 +622,11 @@ const MedicalConsultationProcess = () => {
                 )}
 
                 {step === 3 && (
-                    <div className="bg-white p-6 rounded-2xl  mt-4">
+                    <div className="bg-white p-6 rounded-2xl mt-4">
                         <div className="flex justify-between items-center">
                             <h2 className="text-lg font-semibold text-black mb-4">
                                 Confirma los datos de la consulta
                             </h2>
-                            {/* Botón para imprimir */}
                             <button
                                 type="button"
                                 className="text-gray-500 hover:text-blue-600"
@@ -443,19 +640,40 @@ const MedicalConsultationProcess = () => {
                         </p>
 
                         {/* Diagnóstico */}
-                        <div className="mb-6">
-                            <h3 className="text-lg font-semibold text-[#2c7fff] mb-6">Diagnóstico</h3>
-                            <div className="mb-2">
-                                <p className="text-sm font-bold text-gray-400">Tipo de enfermedad</p>
-                                <p className="text-gray-600 mt-[1px]">
-                                    {enfermedades?.find((e) => e.id === parseInt(selectedEnfermedad))?.nombre || "No especificado"}
+                        <div className="flex flex-row gap-24">
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold text-[#2c7fff] mb-6">Diagnóstico</h3>
+                                <div className="mb-2">
+                                    <p className="text-sm font-bold text-gray-400">Tipo de enfermedad</p>
+                                    <p className="text-gray-600 mt-[1px]">
+                                        {enfermedades?.find((e) => e.id === parseInt(selectedEnfermedad))?.nombre || "No especificado"}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold text-gray-400">Descripción</p>
+                                    <p className="text-gray-600 mt-[1px]">{diagnosis || "No especificado"}</p>
+                                </div>
+                            </div>
 
-                                </p>
+                            {/* 🔹 Triaje */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold text-[#2c7fff] mb-6">Triaje</h3>
+                                <div className="mb-2">
+                                    <p className="text-sm font-bold text-gray-400">Puntaje Total</p>
+                                    <p className="text-gray-600 mt-[1px]">
+                                        {puntajeTriaje !== null ? puntajeTriaje : "No calculado"}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold text-gray-400">Categoría</p>
+                                    <p className={`mt-[1px] font-bold ${categoriaTriaje === "Crítico" ? "text-red-500" :
+                                        categoriaTriaje === "Alerta severa" ? "text-orange-500" :
+                                            categoriaTriaje === "Alerta moderada" ? "text-yellow-500" : "text-green-500"}`}>
+                                        {categoriaTriaje || "Normal"}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm font-bold text-gray-400">Descripción</p>
-                                <p className="text-gray-600 mt-[1px]">{diagnosis || "No especificado"}</p>
-                            </div>
+
                         </div>
 
                         {/* Receta */}
@@ -494,6 +712,7 @@ const MedicalConsultationProcess = () => {
                         </div>
                     </div>
                 )}
+
 
 
             </div>
